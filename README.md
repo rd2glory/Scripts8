@@ -3,8 +3,8 @@
 Scripts8 is a collection of scripts made by iamtryingtofindname for ROBLOX that bring functionality and usability to a new level. Scripts are made for private use.
 
 <details>
-  <summary>### Artemis</summary>
-  
+  <summary> Artemis</summary>
+  <br>
   #### Latest Version Loader
   
   ```lua
