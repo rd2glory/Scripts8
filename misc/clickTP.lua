@@ -17,7 +17,7 @@ shared.v = game:GetService("UserInputService").InputBegan:Connect(function(input
 		local goal = mouse.Hit
 		local char = plr.Character
 		if char then
-			char.PrimaryPart.CFrame = goal*CFrame.new(0,3,0)
+			char.PrimaryPart.CFrame = goal*CFrame.new(0,4.5,0)
 		end
 	end
 end)
