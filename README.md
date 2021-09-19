@@ -7,7 +7,7 @@ Scripts8 is a collection of scripts made by iamtryingtofindname for ROBLOX that 
 ### Latest Version Loader
   
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/TowerOfHell/DaHood/LatestVersionLoader.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/DaHood/LatestVersionLoader.lua"))()
 ```
   
 ### Version Loader
