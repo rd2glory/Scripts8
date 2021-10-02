@@ -4,17 +4,23 @@ Scripts8 is a collection of scripts made by iamtryingtofindname for ROBLOX that 
 
 ## Artemis
 
-### Latest Version Loader
+### Latest Version
   
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/DaHood/LatestVersionLoader.lua"))()
+```
+
+### Latest Beta
+  
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/DaHood/BetaLoader.lua"))()
 ```
   
 ### Version Loader
   
 ```lua
-local inBeta = true
-local version = "1.0"
+local inBeta = false
+local version = "1"
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Artemis/main/releases/"..((inBeta and "beta") or "v")..version..".lua"))()
 ```
