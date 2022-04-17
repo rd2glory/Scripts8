@@ -13,3 +13,5 @@ player.Idled:Connect(function()
 	print("Simulated mouse click to prevent AFK kick ("..count..")")
 	count = count + 1
 end)
+
+print("Anti-AFK initiated")
