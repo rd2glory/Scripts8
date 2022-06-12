@@ -34,7 +34,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/A
 ## Jailbreak+
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/DaHood/LatestVersionLoader.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua")
 ```
 
 ## Tower Of Hell
