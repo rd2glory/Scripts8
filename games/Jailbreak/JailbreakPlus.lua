@@ -35,6 +35,7 @@ local addGuiOffsetByMake = {
     Roadster = 0.4;
     Chiron = 0.4;
     Volt = 0.5;
+    Monster = 1.5;
 }
 
 local function makeInfoGui()
@@ -284,7 +285,7 @@ Run.Heartbeat:Connect(function()
 		local boundingBox = v:FindFirstChild("BoundingBox")
 		local seat = v:FindFirstChild("Seat")
 		local info = boundingBox:FindFirstChild("InfoGui")
-		local make = v:FindFirstChild("Make").Value
+		local make = v:FindFirstChild("Make") and v:FindFirstChild("Make").Value
 
         if make and seat then
             local carInfo = nil
@@ -302,7 +303,7 @@ Run.Heartbeat:Connect(function()
             
             info.StudsOffsetWorldSpace = Vector3.new(0, boundingBox.Size.Y/2+2.5+(addGuiOffsetByMake[carInfo.Make or ""] or 0), 0)
     
-            local lastPlayer = seat.PlayerName.Value
+            local lastPlayer = seat.PlayerName and seat.PlayerName.Value
     
             if lastPlayer == "" then
                 lastPlayer = nil
@@ -316,7 +317,7 @@ Run.Heartbeat:Connect(function()
                 BeingRidden = seat.Player.Value;
                 LastPlayer = lastPlayer;
                 Age = now-born[v];
-                CanAfford = carInfo.Price and carInfo.Price<= money;
+                CanAfford = carInfo.Price and carInfo.Price <= money;
                 Season = carInfo.Season;
                 Level = carInfo.Level;
                 Retired = carInfo.Retired;
