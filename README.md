@@ -31,6 +31,12 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/A
 -- This has been removed temporarily. This may or may not be added back soon.
 ```
 
+## Jailbreak+
+
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/DaHood/LatestVersionLoader.lua"))()
+```
+
 ## Tower Of Hell
 
 ### Remove Kill Parts
