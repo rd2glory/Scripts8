@@ -36,6 +36,7 @@ local addGuiOffsetByMake = {
     Chiron = 0.4;
     Volt = 0.5;
     Monster = 1.5;
+	Drone = -1;
 }
 
 local function makeInfoGui()
