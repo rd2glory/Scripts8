@@ -258,7 +258,7 @@ Run.Heartbeat:Connect(function()
 	for _,v in pairs(Vehicles:GetChildren()) do
 		local boundingBox = v:FindFirstChild("BoundingBox")
 
-        local old = boundingBox:FindFirstChild("MoneyBillboard")
+        local old = boundingBox and boundingBox:FindFirstChild("MoneyBillboard")
 
         if old then
             old.Frame.Visible = false
