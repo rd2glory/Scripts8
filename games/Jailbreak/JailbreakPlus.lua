@@ -11,6 +11,8 @@ local GameFolder = ReplicatedStorage.Game
 local Vehicles = workspace:WaitForChild("Vehicles")
 local VehicleData = require(GameFolder.Garage.VehicleData)
 
+local born = {}
+
 local player = Players.LocalPlayer
 --local playerGui = player:WaitForChild("PlayerGui")
 --local GarageUI = playerGui:WaitForChild("AppUI"):WaitForChild("Garage")
@@ -256,7 +258,7 @@ Run.Heartbeat:Connect(function()
 	for _,v in pairs(Vehicles:GetChildren()) do
 		local boundingBox = v:FindFirstChild("BoundingBox")
 
-        local old = v:FindFirstChild("MoneyBillboard")
+        local old = boundingBox:FindFirstChild("MoneyBillboard")
 
         if old then
             old.Frame.Visible = false
@@ -305,13 +307,15 @@ Run.Heartbeat:Connect(function()
             if lastPlayer == "" then
                 lastPlayer = nil
             end
+
+            born[v] = born[v] or seat.Depart.Value
     
             editInfo(info.Frame,{
                 CarName = v.Name;
                 Price = carInfo.Price;
                 BeingRidden = seat.Player.Value;
                 LastPlayer = lastPlayer;
-                Age = now-seat.Depart.Value;
+                Age = now-born[v];
                 CanAfford = carInfo.Price and carInfo.Price<= money;
                 Season = carInfo.Season;
                 Level = carInfo.Level;
