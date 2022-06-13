@@ -1,5 +1,7 @@
-if game.PlaceId ~= 606849621 then
+if game.PlaceId ~= 606849621 and game.PlaceId ~= 9780994092 then
 	task.wait(9e9)
+else
+	print("Initiating Jailbreak+...")
 end
 
 local Version = 3
