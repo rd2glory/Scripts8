@@ -1,4 +1,7 @@
-local Version = 1
+local Version = 2
+
+repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
+task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
 
 -- Services
 local Players = game:GetService("Players")
@@ -6,12 +9,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Run = game:GetService("RunService")
 
 -- Variables
-local GameFolder = ReplicatedStorage.Game
+local GameFolder = ReplicatedStorage:WaitForChild("Game")
 
 local Vehicles = workspace:WaitForChild("Vehicles")
 local VehicleData = require(GameFolder.Garage.VehicleData)
 
 local born = {}
+local lastDrivenBy = {}
 
 local player = Players.LocalPlayer
 --local playerGui = player:WaitForChild("PlayerGui")
@@ -29,7 +33,7 @@ local addGuiOffsetByMake = {
     Jet = -1;
     Classic = 0.5;
     Camaro = 0.5;
-    Bugatti = 1;
+    Bugatti = 1.5;
     Concept = 1.5;
     Model3 = 0.5;
     Roadster = 0.4;
@@ -37,6 +41,8 @@ local addGuiOffsetByMake = {
     Volt = 0.5;
     Monster = 1.5;
 	Drone = -1;
+	R8 = 0.1;
+	Torpedo = 0.5;
 }
 
 local function makeInfoGui()
@@ -57,7 +63,6 @@ local function makeInfoGui()
 	--Properties:
 
 	InfoGui.Name = "InfoGui"
-	InfoGui.Parent = game.Workspace.Part
 	InfoGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	InfoGui.Active = true
 	InfoGui.MaxDistance = 512.000
@@ -158,6 +163,115 @@ local function makeInfoGui()
 	return InfoGui
 end
 
+local function makeNametag()
+	-- Gui to Lua
+	-- Version: 3.2
+
+	-- Instances:
+
+	local Nametag = Instance.new("BillboardGui")
+	local Frame = Instance.new("Frame")
+	local DisplayName = Instance.new("TextLabel")
+	local Cash = Instance.new("TextLabel")
+	local PlayerName = Instance.new("TextLabel")
+	local UIListLayout = Instance.new("UIListLayout")
+	local Health = Instance.new("Frame")
+	local ImageLabel = Instance.new("ImageLabel")
+	local ImageLabel_2 = Instance.new("ImageLabel")
+
+	--Properties:
+
+	Nametag.Name = "Nametag"
+	Nametag.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	Nametag.Active = true
+	Nametag.MaxDistance = 100.000
+	Nametag.Size = UDim2.new(7, 0, 3, 0)
+	Nametag.StudsOffsetWorldSpace = Vector3.new(0, 2.8, 0)
+
+	Frame.Parent = Nametag
+	Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Frame.BackgroundTransparency = 1.000
+	Frame.Size = UDim2.new(1, 0, 1, 0)
+
+	DisplayName.Name = "|DisplayName"
+	DisplayName.Parent = Frame
+	DisplayName.AnchorPoint = Vector2.new(0, 1)
+	DisplayName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	DisplayName.BackgroundTransparency = 1.000
+	DisplayName.Position = UDim2.new(0, 0, 0.800000012, 0)
+	DisplayName.Size = UDim2.new(1, 0, 0.219999999, 0)
+	DisplayName.Font = Enum.Font.SourceSansSemibold
+	DisplayName.Text = "Flamingo"
+	DisplayName.TextColor3 = Color3.fromRGB(255, 255, 255)
+	DisplayName.TextScaled = true
+	DisplayName.TextSize = 42.000
+	DisplayName.TextStrokeTransparency = 0.600
+	DisplayName.TextWrapped = true
+
+	Cash.Name = "Cash"
+	Cash.Parent = Frame
+	Cash.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Cash.BackgroundTransparency = 1.000
+	Cash.Position = UDim2.new(0, 0, 0.100000001, 0)
+	Cash.Size = UDim2.new(1, 0, 0.174999997, 0)
+	Cash.Font = Enum.Font.SourceSansSemibold
+	Cash.Text = "$2M"
+	Cash.TextColor3 = Color3.fromRGB(82, 238, 111)
+	Cash.TextScaled = true
+	Cash.TextSize = 42.000
+	Cash.TextStrokeTransparency = 0.600
+	Cash.TextWrapped = true
+
+	PlayerName.Name = "||PlayerName"
+	PlayerName.Parent = Frame
+	PlayerName.AnchorPoint = Vector2.new(0, 1)
+	PlayerName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	PlayerName.BackgroundTransparency = 1.000
+	PlayerName.Position = UDim2.new(0, 0, 1, 0)
+	PlayerName.Size = UDim2.new(1, 0, 0.125, 0)
+	PlayerName.Font = Enum.Font.SourceSansSemibold
+	PlayerName.Text = "iamtryingtofindname"
+	PlayerName.TextColor3 = Color3.fromRGB(255, 255, 255)
+	PlayerName.TextScaled = true
+	PlayerName.TextSize = 42.000
+	PlayerName.TextStrokeTransparency = 0.600
+	PlayerName.TextWrapped = true
+
+	UIListLayout.Parent = Frame
+	UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+	UIListLayout.Padding = UDim.new(-0.0199999996, 0)
+
+	Health.Name = "|||Health"
+	Health.Parent = Frame
+	Health.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Health.BackgroundTransparency = 1.000
+	Health.Size = UDim2.new(0.25, 0, 0.075000003, 0)
+
+	ImageLabel.Parent = Health
+	ImageLabel.AnchorPoint = Vector2.new(0, 1)
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel.BackgroundTransparency = 1.000
+	ImageLabel.Position = UDim2.new(0, 0, 1, 0)
+	ImageLabel.Size = UDim2.new(1, 0, 0.4, 0)
+	ImageLabel.Image = "rbxassetid://5456843074"
+	ImageLabel.ImageColor3 = Color3.fromRGB(193, 193, 193)
+	ImageLabel.ImageTransparency = 0.6
+	ImageLabel.ScaleType = Enum.ScaleType.Slice
+	ImageLabel.SliceCenter = Rect.new(99, 99, 101, 101)
+
+	ImageLabel_2.Parent = ImageLabel
+	ImageLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	ImageLabel_2.BackgroundTransparency = 1.000
+	ImageLabel_2.Size = UDim2.new(1, 0, 1, 0)
+	ImageLabel_2.Image = "rbxassetid://5456843074"
+	ImageLabel_2.ImageColor3 = Color3.fromRGB(0, 0, 0)
+	ImageLabel_2.ScaleType = Enum.ScaleType.Slice
+	ImageLabel_2.SliceCenter = Rect.new(99, 99, 101, 101)
+
+	return Nametag
+end
+
 local function formatTime(seconds)
     local minutes = seconds/60
     local hours = minutes/60
@@ -174,10 +288,30 @@ local function formatTime(seconds)
     end
 end
 
-local formatNumber = (function (n)
+local function formatNumber(n)
 	n = tostring(n)
 	return n:reverse():gsub("%d%d%d", "%1,"):reverse():gsub("^,", "")
-end)
+end
+
+local function formatCashShort(n)
+	n = math.floor(n)
+
+	if n < 100000 then
+		return "$"..formatNumber(n)
+	elseif n < 1000000 then
+		return "$"..tostring(math.floor(n/1000*10)/10).."K"
+	elseif n < 1000000000 then
+		return "$"..tostring(math.floor(n/1000000*10)/10).."M"
+	elseif n < 1000000000000 then
+		return "$"..tostring(math.floor(n/1000000000*10)/10).."B"
+	else
+		return "$"..tostring(math.floor(n/1000000000000*10)/10).."T"
+	end
+end
+
+local function getColor(percent)
+	return Color3.new(percent<0.5 and 1 or (1-percent)*2,percent>0.5 and 1 or percent*2)
+end
 
 local function editInfo(v,info)
     --[[
@@ -199,7 +333,7 @@ local function editInfo(v,info)
 
 	v.CarName.Text = info.CarName
 	v.Age.Text = formatTime(info.Age)
-    v.PlayerName.Text = info.LastPlayer or "Unknown"
+    v.PlayerName.Text = info.LastPlayer or info.LastDrivenBy or "Unknown"
     v.Price.Text = hiddenPrice and "HIDDEN" or "$"..tostring(formatNumber(info.Price))
 
     v.Price.Visible = not hiddenPrice
@@ -237,10 +371,14 @@ local function editInfo(v,info)
         v.ExtraInfo.TextColor3 = Color3.fromRGB(255, 144, 46)
     end
 
-    v.PlayerName.Visible = info.LastPlayer and true or false
-    v.Thumbnail.Visible = info.LastPlayer and true or false
+	local lastPlayer = info.LastPlayer or info.LastDrivenBy
 
-    local playerId = info.LastPlayer and Players:FindFirstChild(info.LastPlayer) and Players:FindFirstChild(info.LastPlayer).UserId
+    v.PlayerName.Visible = lastPlayer and true or false
+    v.Thumbnail.Visible = lastPlayer and true or false
+	v.PlayerName.Font = info.LastPlayer and Enum.Font.SourceSansSemibold or Enum.Font.SourceSansLight
+	v.Thumbnail.ImageTransparency = info.LastPlayer and 0 or 0.55
+
+    local playerId = lastPlayer and Players:FindFirstChild(lastPlayer) and Players:FindFirstChild(lastPlayer).UserId
 
     v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or "http://www.roblox.com/asset/?id=9883071856"
 
@@ -262,7 +400,7 @@ Run.Heartbeat:Connect(function()
 
         local old = boundingBox and boundingBox:FindFirstChild("MoneyBillboard")
 
-        if old then
+        if old and old:FindFirstChild("Frame") then
             old.Frame.Visible = false
         end
 
@@ -304,19 +442,37 @@ Run.Heartbeat:Connect(function()
             
             info.StudsOffsetWorldSpace = Vector3.new(0, boundingBox.Size.Y/2+2.5+(addGuiOffsetByMake[carInfo.Make or ""] or 0), 0)
     
-            local lastPlayer = seat.PlayerName and seat.PlayerName.Value
+            local lastPlayer = seat:FindFirstChild("PlayerName") and seat.PlayerName.Value
     
             if lastPlayer == "" then
                 lastPlayer = nil
             end
 
-            born[v] = born[v] or seat.Depart.Value
+			local timeBorn = born[v]
+
+			if not timeBorn then
+				local departTimes = {}
+
+				for _,j in pairs(v:GetDescendants()) do
+					if j.Name == "Depart" and j:IsA("NumberValue") then
+						table.insert(departTimes,j.Value)
+					end
+				end
+
+				table.sort(departTimes)
+
+				timeBorn = departTimes[1] or now
+			end
+
+            born[v] = timeBorn
+			lastDrivenBy[v] = lastPlayer or lastDrivenBy[v]
     
             editInfo(info.Frame,{
                 CarName = v.Name;
                 Price = carInfo.Price;
-                BeingRidden = seat.Player.Value;
+                BeingRidden = seat:FindFirstChild("Player") and seat:FindFirstChild("Player").Value;
                 LastPlayer = lastPlayer;
+				LastDrivenBy = lastDrivenBy[v];
                 Age = now-born[v];
                 CanAfford = carInfo.Price and carInfo.Price <= money;
                 Season = carInfo.Season;
@@ -327,6 +483,59 @@ Run.Heartbeat:Connect(function()
                 _oldEnabled = boundingBox:FindFirstChild("MoneyBillboard") and boundingBox:FindFirstChild("MoneyBillboard").Enabled or false;
             })
         end
+	end
+
+	-- Make nametags
+	for _,v in pairs(Players:GetPlayers()) do
+		local c = v.Character
+
+		if c and c:FindFirstChild("Head") and c.PrimaryPart and c:FindFirstChild("Humanoid") then
+			c.Humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+
+			if not c.Head:FindFirstChild("Nametag") then
+				local new = makeNametag()
+				new.Parent = c.Head
+			end
+		end
+	end
+
+	local playersInVehicles = {}
+
+	for _,v in pairs(Vehicles:GetDescendants()) do
+		if v.Name == "PlayerName" and v:IsA("StringValue") and v.Value ~= "" then
+			table.insert(playersInVehicles,v.Value)
+		end
+	end
+
+	-- Update Nametags
+	for _,v in pairs(Players:GetPlayers()) do
+		local c = v.Character
+
+		if c and c:FindFirstChild("Humanoid") and c:FindFirstChild("Head") and c.Head:FindFirstChild("Nametag") and v:FindFirstChild("leaderstats") and v.leaderstats:FindFirstChild("Money") then
+			local cash = v.leaderstats.Money.Value
+			local percent = c.Humanoid.Health/c.Humanoid.MaxHealth
+			local nametag = c.Head.Nametag.Frame
+
+			nametag.Visible = not table.find(playersInVehicles,v.Name)
+
+			if not table.find(playersInVehicles,v.Name) then
+				nametag.Cash.Text = formatCashShort(cash)
+				nametag:FindFirstChild("||PlayerName").Text = v.DisplayName or v.Name
+				--nametag:FindFirstChild("|DisplayName").Text = v.DisplayName
+				--nametag:FindFirstChild("|DisplayName").Visible = v.Name ~= v.DisplayName and true or false
+				nametag:FindFirstChild("|DisplayName").Visible = false
+
+				nametag:FindFirstChild("||PlayerName").TextColor3 = (v.Team.Name == "Police" and Color3.fromRGB(26, 156, 255)) or (v.Team.Name == "Criminal" and Color3.fromRGB(255, 66, 66)) or (v.Team.Name == "Prisoner" and Color3.fromRGB(255, 141, 26)) or Color3.fromRGB(255,255,255)
+
+				if percent == 1 then
+					nametag:FindFirstChild("|||Health").Visible = false
+				else
+					nametag:FindFirstChild("|||Health").Visible = true
+					nametag:FindFirstChild("|||Health").ImageLabel.ImageLabel.Size = UDim2.new(percent, 0, 1, 0)
+					nametag:FindFirstChild("|||Health").ImageLabel.ImageLabel.ImageColor3 = getColor(percent)
+				end
+			end
+		end
 	end
 end)
 
