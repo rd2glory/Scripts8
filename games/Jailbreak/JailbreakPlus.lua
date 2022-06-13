@@ -26,6 +26,8 @@ local robberyVehicles = {
 }
 
 local addGuiOffsetByMake = {
+	Arachnid = 0.8;
+	BeamHybrid = 0.75;
     Heli = 3;
     Jeep = 2.5;
     BlackHawk = -1;
@@ -42,7 +44,7 @@ local addGuiOffsetByMake = {
     Monster = 1.5;
 	Drone = -1;
 	R8 = 0.1;
-	Torpedo = 0.5;
+	Torpedo = 0.75;
 }
 
 local function makeInfoGui()
