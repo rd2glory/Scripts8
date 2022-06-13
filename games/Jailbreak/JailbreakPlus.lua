@@ -1,10 +1,17 @@
+local LastTestedJailbreakVersion = 0
+
 if game.PlaceId ~= 606849621 and game.PlaceId ~= 9780994092 then
 	task.wait(9e9)
 else
-	print("Initiating Jailbreak+...")
+	if game.PlaceVersion > LastTestedJailbreakVersion then
+		warn("Jailbreak+ has not been tested with this version of Jailbreak, please contact the dev in order to ensure safety from ban in this version")
+		task.wait(9e9)
+	else
+		print("Initiating Jailbreak+...")
+	end
 end
 
-local Version = 3
+local Version = 3.1
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -27,6 +34,8 @@ local player = Players.LocalPlayer
 --local playerGui = player:WaitForChild("PlayerGui")
 --local GarageUI = playerGui:WaitForChild("AppUI"):WaitForChild("Garage")
 
+local NoClipEnabled = false
+
 local robberyVehicles = {
     "BankTruck";
 }
@@ -34,9 +43,9 @@ local robberyVehicles = {
 local addGuiOffsetByMake = {
 	Arachnid = 0.8;
 	BeamHybrid = 0.75;
-    Heli = 3;
+    Heli = 3.1;
     Jeep = 2.5;
-    BlackHawk = -1;
+    BlackHawk = -2;
     LittleBird = -1.25;
     Jet = -1;
     Classic = 0.5;
@@ -543,6 +552,14 @@ Run.Heartbeat:Connect(function()
 					nametag:FindFirstChild("|||Health").ImageLabel.ImageLabel.ImageColor3 = getColor(percent)
 				end
 			end
+		end
+	end
+end)
+
+UIS.InputBegan:Connect(function(input,gpe)
+	if input.UserInputType == Enum.UserInputType.Keyboard then
+		if input.KeyCode == Enum.KeyCode.PageDown then
+			-- toggle no-clip
 		end
 	end
 end)
