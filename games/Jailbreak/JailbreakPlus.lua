@@ -1,17 +1,6 @@
-local LastTestedJailbreakVersion = 0
+print("Initiating Jailbreak+...")
 
-if game.PlaceId ~= 606849621 and game.PlaceId ~= 9780994092 then
-	task.wait(9e9)
-else
-	if game.PlaceVersion > LastTestedJailbreakVersion then
-		warn("Jailbreak+ has not been tested with this version of Jailbreak, please contact the dev in order to ensure safety from ban in this version")
-		task.wait(9e9)
-	else
-		print("Initiating Jailbreak+...")
-	end
-end
-
-local Version = 3.1
+local Version = 3.9
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -20,6 +9,7 @@ task.wait(2) -- if i code it the right way, it will take more lines, and i dont 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Run = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
 
 -- Variables
 local GameFolder = ReplicatedStorage:WaitForChild("Game")
@@ -45,7 +35,7 @@ local addGuiOffsetByMake = {
 	BeamHybrid = 0.75;
     Heli = 3.1;
     Jeep = 2.5;
-    BlackHawk = -2;
+    BlackHawk = -3;
     LittleBird = -1.25;
     Jet = -1;
     Classic = 0.5;
@@ -556,10 +546,57 @@ Run.Heartbeat:Connect(function()
 	end
 end)
 
+local originalProperties = {}
+local doorParts = {}
+
+do -- init no-clip
+	for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
+		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
+		if ((v.Name == "SwingDoor" or v.Name == "SlideDoor") and v:IsA("Model")) or part or v.Name == "Door" then
+			if part and v:IsA("BasePart") then
+				doorParts[part] = true
+			elseif v.Name == "Door" then
+				if not v:IsDescendantOf(Vehicles) then
+					if v:IsA("BasePart") then
+						doorParts[v] = true
+					end
+
+					for _,j in pairs(v:GetDescendants()) do
+						if j:IsA("BasePart") then
+							doorParts[j] = true
+						end
+					end
+				end
+			else
+				for _,j in pairs(v:GetDescendants()) do
+					if j:IsA("BasePart") then
+						doorParts[j] = true
+					end
+				end
+			end
+		end
+	end
+
+	for v,_ in pairs(doorParts) do
+		originalProperties[v] = {v.Anchored,v.CanCollide,v.Transparency}
+	end
+end
+
 UIS.InputBegan:Connect(function(input,gpe)
 	if input.UserInputType == Enum.UserInputType.Keyboard then
 		if input.KeyCode == Enum.KeyCode.PageDown then
 			-- toggle no-clip
+			NoClipEnabled = not NoClipEnabled
+
+			for v,_ in pairs(doorParts) do
+				local op = originalProperties[v]
+
+				if NoClipEnabled then
+					v.Anchored,v.CanCollide = true,false
+				else
+					v.Anchored,v.CanCollide,v.Transparency = op[1],op[2],op[3]
+				end
+			end
 		end
 	end
 end)
