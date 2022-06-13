@@ -1,4 +1,8 @@
-local Version = 2
+if game.PlaceId ~= 606849621 then
+	task.wait(9e9)
+end
+
+local Version = 3
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -44,7 +48,7 @@ local addGuiOffsetByMake = {
     Monster = 1.5;
 	Drone = -1;
 	R8 = 0.1;
-	Torpedo = 0.75;
+	Torpedo = 1.15;
 }
 
 local function makeInfoGui()
@@ -540,5 +544,7 @@ Run.Heartbeat:Connect(function()
 		end
 	end
 end)
+
+syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
 print("Jailbreak+ (v"..Version..") initiated sucessfully")
