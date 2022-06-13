@@ -554,7 +554,7 @@ do -- init no-clip
 		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
 		if ((v.Name == "SwingDoor" or v.Name == "SlideDoor") and v:IsA("Model")) or part or v.Name == "Door" then
 			if part and v:IsA("BasePart") then
-				doorParts[part] = true
+				doorParts[v] = true
 			elseif v.Name == "Door" then
 				if not v:IsDescendantOf(Vehicles) then
 					if v:IsA("BasePart") then
