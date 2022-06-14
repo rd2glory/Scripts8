@@ -1,6 +1,39 @@
+--[[
+
+
+░░░░░██╗░█████╗░██╗██╗░░░░░██████╗░██████╗░███████╗░█████╗░██╗░░██╗░░░░░░░
+░░░░░██║██╔══██╗██║██║░░░░░██╔══██╗██╔══██╗██╔════╝██╔══██╗██║░██╔╝░░██╗░░
+░░░░░██║███████║██║██║░░░░░██████╦╝██████╔╝█████╗░░███████║█████═╝░██████╗
+██╗░░██║██╔══██║██║██║░░░░░██╔══██╗██╔══██╗██╔══╝░░██╔══██║██╔═██╗░╚═██╔═╝
+╚█████╔╝██║░░██║██║███████╗██████╦╝██║░░██║███████╗██║░░██║██║░╚██╗░░╚═╝░░
+░╚════╝░╚═╝░░╚═╝╚═╝╚══════╝╚═════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝░░░░░░░
+
+HOW TO USE:
+
+a. https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/Copy%26PasteIntoAutoExec.lua
+
+b. https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/UnwrappedJBP.lua
+
+Copy and paste the code at link a into a script executor. This code includes a wrapper that is designed to be used in the autoexec folder of your executor.
+It also has version update safety, so each time the developer updates the game, it must be approved by the developer that the script is safe for use
+in the newly updated place.
+
+To use the unwrapped module without any safeguard, execute the script at link b. That script cannot be used in the autoexec folder.
+
+The unwrapped script and the safe script both have an "on teleport" queue script, so when teleported to the trade island or back, the unwrapped code will be ran
+upon teleportation.
+
+KEYBINDS:
+
+Page Down (Page End) - toggle no-clip
+
+Page Up (Page Home) - double tap to rejoin a server with the same place ID.
+
+]]--
+
 print("Initiating Jailbreak+...")
 
-local Version = "4a"
+local Version = "4b"
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -27,6 +60,7 @@ local player = Players.LocalPlayer
 --local GarageUI = playerGui:WaitForChild("AppUI"):WaitForChild("Garage")
 
 local NoClipEnabled = false
+local Exiting = false
 
 local robberyVehicles = {
     "BankTruck";
@@ -611,8 +645,10 @@ do -- init no-clip
 	end
 end
 
+local lastUpPress = -1
+
 UIS.InputBegan:Connect(function(input,gpe)
-	if input.UserInputType == Enum.UserInputType.Keyboard then
+	if input.UserInputType == Enum.UserInputType.Keyboard and not Exiting then
 		if input.KeyCode == Enum.KeyCode.PageDown then
 			-- toggle no-clip
 			NoClipEnabled = not NoClipEnabled
@@ -628,6 +664,17 @@ UIS.InputBegan:Connect(function(input,gpe)
 			end
 
 			notify("No-Clip toggled "..NoClipEnabled and "on" or "off")
+		elseif input.KeyCode == Enum.KeyCode.PageUp then
+			local now = os.clock()
+			if now-lastUpPress < 0.8 then
+				-- rejoin
+				Exiting = true
+
+				game:GetService("Players").LocalPlayer:Kick("Rejoining in 5 sec (DON'T LEAVE)")
+				task.wait(5)
+				game:GetService("TeleportService"):Teleport(game.PlaceId)
+			end
+			lastUpPress = now
 		end
 	end
 end)
