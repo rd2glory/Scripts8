@@ -1,6 +1,6 @@
 print("Initiating Jailbreak+...")
 
-local Version = "4"
+local Version = "4a"
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
