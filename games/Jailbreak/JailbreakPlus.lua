@@ -33,7 +33,7 @@ Page Up (Page Home) - double tap to rejoin a server with the same place ID.
 
 print("Initiating Jailbreak+...")
 
-local Version = "4b"
+local Version = "4c"
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -663,14 +663,14 @@ UIS.InputBegan:Connect(function(input,gpe)
 				end
 			end
 
-			notify("No-Clip toggled "..NoClipEnabled and "on" or "off")
+			notify("No-Clip toggled "..(NoClipEnabled and "on" or "off"))
 		elseif input.KeyCode == Enum.KeyCode.PageUp then
 			local now = os.clock()
 			if now-lastUpPress < 0.8 then
 				-- rejoin
 				Exiting = true
 
-				game:GetService("Players").LocalPlayer:Kick("Rejoining in 5 sec (DON'T LEAVE)")
+				game:GetService("Players").LocalPlayer:Kick("Rejoining soon (DON'T LEAVE)")
 				task.wait(5)
 				game:GetService("TeleportService"):Teleport(game.PlaceId)
 			end
@@ -682,4 +682,4 @@ end)
 syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
 print("Jailbreak+ (v"..Version..") initiated sucessfully")
-notify("Jailbreak+ (v"..Version..") initiated")
+notify("Jailbreak+ (v"..Version..") initiated", 5)
