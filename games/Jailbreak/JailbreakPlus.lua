@@ -1,6 +1,6 @@
 print("Initiating Jailbreak+...")
 
-local Version = 3.9
+local Version = "4"
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -16,6 +16,8 @@ local GameFolder = ReplicatedStorage:WaitForChild("Game")
 
 local Vehicles = workspace:WaitForChild("Vehicles")
 local VehicleData = require(GameFolder.Garage.VehicleData)
+
+local Notification = require(ReplicatedStorage:WaitForChild("Game"):WaitForChild("Notification"))
 
 local born = {}
 local lastDrivenBy = {}
@@ -50,6 +52,7 @@ local addGuiOffsetByMake = {
 	Drone = -1;
 	R8 = 0.1;
 	Torpedo = 1.15;
+	Interrogator = 0.6;
 }
 
 local function makeInfoGui()
@@ -168,6 +171,18 @@ local function makeInfoGui()
 	ExtraInfo.TextWrapped = true
 
 	return InfoGui
+end
+
+local function notify(text,duration)
+	text = text or "nil"
+	duration = duration or 3
+
+	local e = Notification.new({
+		["Text"] = text;
+		["Duration"] = duration;
+	})
+	
+	Notification.Hook(e)
 end
 
 local function makeNametag()
@@ -548,10 +563,15 @@ end)
 
 local originalProperties = {}
 local doorParts = {}
+local specialNoClipPos = {
+	Vector3.new(1159.342, 118.258, 1328.051); -- msm window
+	Vector3.new(150.519, 64.907, 1267.75); -- jew store window
+}
 
 do -- init no-clip
 	for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
 		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
+
 		if ((v.Name == "SwingDoor" or v.Name == "SlideDoor") and v:IsA("Model")) or part or v.Name == "Door" then
 			if part and v:IsA("BasePart") then
 				doorParts[v] = true
@@ -572,6 +592,15 @@ do -- init no-clip
 					if j:IsA("BasePart") then
 						doorParts[j] = true
 					end
+				end
+			end
+		end
+
+		if v:IsA("BasePart") then
+			for _,e in pairs(specialNoClipPos) do
+				if (v.Position-e).Magnitude < 0.01 then -- floating point error
+					doorParts[v] = true
+					break
 				end
 			end
 		end
@@ -597,6 +626,8 @@ UIS.InputBegan:Connect(function(input,gpe)
 					v.Anchored,v.CanCollide,v.Transparency = op[1],op[2],op[3]
 				end
 			end
+
+			notify("No-Clip toggled "..NoClipEnabled and "on" or "off")
 		end
 	end
 end)
@@ -604,3 +635,4 @@ end)
 syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
 print("Jailbreak+ (v"..Version..") initiated sucessfully")
+notify("Jailbreak+ (v"..Version..") initiated")
