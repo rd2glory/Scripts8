@@ -33,7 +33,7 @@ Page Up (Page Home) - double tap to rejoin a server with the same place ID.
 
 print("Initiating Jailbreak+...")
 
-local Version = "4c"
+local Version = "4d"
 
 repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
@@ -43,6 +43,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Run = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
+local TS = game:GetService("TeleportService")
 
 -- Variables
 local GameFolder = ReplicatedStorage:WaitForChild("Game")
@@ -211,12 +212,14 @@ local function notify(text,duration)
 	text = text or "nil"
 	duration = duration or 3
 
-	local e = Notification.new({
-		["Text"] = text;
-		["Duration"] = duration;
-	})
-	
-	Notification.Hook(e)
+	pcall(function()
+		local e = Notification.new({
+			["Text"] = text;
+			["Duration"] = duration;
+		})
+		
+		Notification.Hook(e)
+	end)
 end
 
 local function makeNametag()
@@ -602,7 +605,7 @@ local specialNoClipPos = {
 	Vector3.new(150.519, 64.907, 1267.75); -- jew store window
 }
 
-do -- init no-clip
+if game.PlaceId == 606849621 then -- init no-clip
 	for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
 		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
 
@@ -647,34 +650,56 @@ end
 
 local lastUpPress = -1
 
-UIS.InputBegan:Connect(function(input,gpe)
+local inCancelPeriod = false
+
+UIS.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.Keyboard and not Exiting then
 		if input.KeyCode == Enum.KeyCode.PageDown then
-			-- toggle no-clip
-			NoClipEnabled = not NoClipEnabled
+			if game.PlaceId ~= 606849621 then
+				notify("No-Clip can only be used in the main Jailbreak server!",1.5)
+			else
+				-- toggle no-clip
+				NoClipEnabled = not NoClipEnabled
 
-			for v,_ in pairs(doorParts) do
-				local op = originalProperties[v]
+				for v,_ in pairs(doorParts) do
+					local op = originalProperties[v]
 
-				if NoClipEnabled then
-					v.Anchored,v.CanCollide = true,false
-				else
-					v.Anchored,v.CanCollide,v.Transparency = op[1],op[2],op[3]
+					if NoClipEnabled then
+						v.Anchored,v.CanCollide = true,false
+					else
+						v.Anchored,v.CanCollide,v.Transparency = op[1],op[2],op[3]
+					end
 				end
-			end
 
-			notify("No-Clip toggled "..(NoClipEnabled and "on" or "off"))
+				notify("No-Clip toggled "..(NoClipEnabled and "on" or "off"))
+			end
 		elseif input.KeyCode == Enum.KeyCode.PageUp then
 			local now = os.clock()
-			if now-lastUpPress < 0.8 then
+			if now-lastUpPress < 0.8 and not inCancelPeriod then
 				-- rejoin
-				Exiting = true
 
-				game:GetService("Players").LocalPlayer:Kick("Rejoining soon (DON'T LEAVE)")
-				task.wait(5)
-				game:GetService("TeleportService"):Teleport(game.PlaceId)
+				local savedLastPress = tonumber(tostring(lastUpPress))
+
+				notify("Rejoin process commencing in 3 seconds, press PAGE UP to cancel",3)
+				inCancelPeriod = true
+
+				print("timer started")
+				task.wait(3)
+
+				if savedLastPress == lastUpPress then
+					Exiting = true
+					player:Kick("Rejoining... (DON'T LEAVE)")
+					task.wait(4)
+					TS:Teleport(game.PlaceId)
+				end
+			else
+				if inCancelPeriod then
+					print("cancel")
+					inCancelPeriod = false
+					notify("Rejoin process cancelled",3)
+				end
+				lastUpPress = now
 			end
-			lastUpPress = now
 		end
 	end
 end)
@@ -682,4 +707,4 @@ end)
 syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
 print("Jailbreak+ (v"..Version..") initiated sucessfully")
-notify("Jailbreak+ (v"..Version..") initiated", 5)
+notify("Jailbreak+ (v"..Version..") initiated", 6.5)
