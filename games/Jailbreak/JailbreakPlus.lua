@@ -683,18 +683,17 @@ UIS.InputBegan:Connect(function(input)
 				notify("Rejoin process commencing in 3 seconds, press PAGE UP to cancel",3)
 				inCancelPeriod = true
 
-				print("timer started")
 				task.wait(3)
 
 				if savedLastPress == lastUpPress then
 					Exiting = true
+					notify("Teleporting...",10)
 					player:Kick("Rejoining... (DON'T LEAVE)")
 					task.wait(4)
 					TS:Teleport(game.PlaceId)
 				end
 			else
 				if inCancelPeriod then
-					print("cancel")
 					inCancelPeriod = false
 					notify("Rejoin process cancelled",3)
 				end
