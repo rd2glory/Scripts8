@@ -33,10 +33,9 @@ Page Up (Page Home) - double tap to rejoin a server with the same place ID.
 
 print("Initiating Jailbreak+...")
 
-local Version = "4d"
+local Version = "5a"
 
-repeat task.wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
-task.wait(2) -- if i code it the right way, it will take more lines, and i dont feel like it tbh
+repeat game:GetService("RunService").RenderStepped:Wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 
 -- Services
 local Players = game:GetService("Players")
@@ -49,7 +48,7 @@ local TS = game:GetService("TeleportService")
 local GameFolder = ReplicatedStorage:WaitForChild("Game")
 
 local Vehicles = workspace:WaitForChild("Vehicles")
-local VehicleData = require(GameFolder.Garage.VehicleData)
+local VehicleData = require(GameFolder:WaitForChild("Garage"):WaitForChild("VehicleData"))
 
 local Notification = require(ReplicatedStorage:WaitForChild("Game"):WaitForChild("Notification"))
 
@@ -699,6 +698,11 @@ UIS.InputBegan:Connect(function(input)
 				end
 				lastUpPress = now
 			end
+		elseif input.KeyCode == Enum.KeyCode.KeypadMinus then
+			pcall(function()
+				local character = player.Character
+				character:PivotTo(character.PrimaryPart.CFrame*CFrame.new(0,0,-5))
+			end)
 		end
 	end
 end)
