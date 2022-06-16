@@ -29,11 +29,15 @@ Page Down (Page End) - toggle no-clip
 
 Page Up (Page Home) - double tap to rejoin a server with the same place ID.
 
+Keypad Subtract - teleport forward (5 studs)
+
+Keypad Multiply - toggle short vehicle info
+
 ]]--
 
 print("Initiating Jailbreak+...")
 
-local Version = "5a"
+local Version = "5b"
 
 repeat game:GetService("RunService").RenderStepped:Wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 
@@ -61,6 +65,7 @@ local player = Players.LocalPlayer
 
 local NoClipEnabled = false
 local Exiting = false
+local SmallVehicleDetails = false
 
 local robberyVehicles = {
     "BankTruck";
@@ -83,10 +88,11 @@ local addGuiOffsetByMake = {
     Chiron = 0.4;
     Volt = 0.5;
     Monster = 1.5;
-	Drone = -1;
+	Drone = -1.4;
 	R8 = 0.1;
 	Torpedo = 1.15;
 	Interrogator = 0.6;
+	Trailblazer = 0.175
 }
 
 local function makeInfoGui()
@@ -430,13 +436,14 @@ local function editInfo(v,info)
     end
 
 	local lastPlayer = info.LastPlayer or info.LastDrivenBy
+    local playerId = lastPlayer and Players:FindFirstChild(lastPlayer) and Players:FindFirstChild(lastPlayer).UserId
 
-    v.PlayerName.Visible = lastPlayer and true or false
-    v.Thumbnail.Visible = lastPlayer and true or false
+	local selfDriving = player.UserId == playerId and info.BeingRidden
+
+    v.PlayerName.Visible = (lastPlayer and not SmallVehicleDetails and not selfDriving) and true or false
+    v.Thumbnail.Visible = (lastPlayer and not SmallVehicleDetails and not selfDriving) and true or false
 	v.PlayerName.Font = info.LastPlayer and Enum.Font.SourceSansSemibold or Enum.Font.SourceSansLight
 	v.Thumbnail.ImageTransparency = info.LastPlayer and 0 or 0.55
-
-    local playerId = lastPlayer and Players:FindFirstChild(lastPlayer) and Players:FindFirstChild(lastPlayer).UserId
 
     v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or "http://www.roblox.com/asset/?id=9883071856"
 
@@ -574,9 +581,11 @@ Run.Heartbeat:Connect(function()
 			local percent = c.Humanoid.Health/c.Humanoid.MaxHealth
 			local nametag = c.Head.Nametag.Frame
 
-			nametag.Visible = not table.find(playersInVehicles,v.Name)
+			local dontRender = table.find(playersInVehicles,v.Name) or c:FindFirstChild("Head").LocalTransparencyModifier == 1
 
-			if not table.find(playersInVehicles,v.Name) then
+			nametag.Visible = not dontRender
+
+			if not dontRender then
 				nametag.Cash.Text = formatCashShort(cash)
 				nametag:FindFirstChild("||PlayerName").Text = v.DisplayName or v.Name
 				--nametag:FindFirstChild("|DisplayName").Text = v.DisplayName
@@ -703,6 +712,8 @@ UIS.InputBegan:Connect(function(input)
 				local character = player.Character
 				character:PivotTo(character.PrimaryPart.CFrame*CFrame.new(0,0,-5))
 			end)
+		elseif input.KeyCode == Enum.KeyCode.KeypadMultiply then
+			SmallVehicleDetails = not SmallVehicleDetails
 		end
 	end
 end)
