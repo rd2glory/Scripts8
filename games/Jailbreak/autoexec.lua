@@ -202,6 +202,9 @@ if game.PlaceId == 606849621 or game.PlaceId == 9780994092 then
         Jailbreak.Parent = game:GetService("CoreGui")
         Jailbreak.Enabled = true
         Update.Text = "v"..lastVersion.." : v"..game.PlaceVersion
+    else
+        print("Place version ("..game.PlaceVersion..") is safe for launching JB+")
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()
     end
 end
 --[[
