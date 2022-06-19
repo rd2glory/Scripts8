@@ -39,7 +39,7 @@ Keypad Plus - remove highway while driving on it (used on highway only)
 
 print("Initiating Jailbreak+...")
 
-local Version = "6a"
+local Version = "6b"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -449,9 +449,9 @@ local function editInfo(v,info)
     v.PlayerName.Visible = (lastPlayer and not SmallVehicleDetails and not selfDriving) and true or false
     v.Thumbnail.Visible = (lastPlayer and not SmallVehicleDetails and not selfDriving) and true or false
 	v.PlayerName.Font = info.LastPlayer and Enum.Font.SourceSansSemibold or Enum.Font.SourceSansLight
-	v.Thumbnail.ImageTransparency = info.LastPlayer and 0 or 0.55
+	v.Thumbnail.ImageTransparency = (info.LastPlayer and playerId) and 0 or 0.55
 
-    v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or "http://www.roblox.com/asset/?id=9883071856"
+    v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or "http://www.roblox.com/asset/?id=9964662085"
 
     v.PlayerName.Position =  UDim2.new(0.5, 0, extraInfo and 0.15 or 0.2, 0)
     v.Thumbnail.Position =  UDim2.new(0.5, 0, extraInfo and 0.45 or 0.5, 0)
@@ -845,6 +845,7 @@ do -- highway
 	local function createHighwayBlock(pos)
 		local hw = Instance.new("Part")
 		hw.CastShadow = false
+		hw.BrickColor = BrickColor.new("Steel blue")
 		hw.Material = Enum.Material.SmoothPlastic
 		hw.Transparency = 0.725
 		hw.Size = Vector3.new(2048, 1, 2048)
@@ -899,8 +900,8 @@ do -- highway
 	createPad(CFrame.new(458.877411, 15.3655624, 300.272797, -0.258819073, 0, 0.965925813, 0, 1, 0, -0.965925813, 0, -0.258819073))
 	createPad(CFrame.new(616.881226, 15.3655624, 729.607727, -0.173648193, 0, 0.98480773, 0, 1, 0, -0.98480773, 0, -0.173648193))
 	createPad(CFrame.new(279.26358, 15.3655624, 910.327515, 0.978147626, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.978147626))
-	createPad(CFrame.new(260.213287, 15.3655624, 1187.17651, -4.37113883e-08, 0, 1, 0, 1, 0, -1, 0, -4.37113883e-08))
-	createPad(CFrame.new(589.684204, 34.9655647, 1652.88989, 0.936672211, 0, 0.350207388, 0, 1, 0, -0.350207388, 0, 0.936672211))
+	createPad(CFrame.new(277.496704, 15.3655624, 1204.71643, -0.979924738, 0, -0.199367672, 0, 1, 0, 0.199367672, 0, -0.979924738)) -- moved slightly as of v6b
+	--createPad(CFrame.new(589.684204, 34.9655647, 1652.88989, 0.936672211, 0, 0.350207388, 0, 1, 0, -0.350207388, 0, 0.936672211)) -- removed (mclaren spot) as of v6b
 	createPad(CFrame.new(348.143036, 15.265564, 1720.86438, 0.978147626, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.978147626))
 	createPad(CFrame.new(-257.635437, 15.265564, 1521.25977, 0.207911655, 0, 0.978147626, 0, 1, 0, -0.978147626, 0, 0.207911655))
 	createPad(CFrame.new(-1150.39355, 30.3655643, 1465.61646, -0.42261833, 0, 0.906307757, 0, 1, 0, -0.906307757, 0, -0.42261833))
@@ -917,7 +918,7 @@ do -- highway
 	createPad(CFrame.new(-1217.9696, 41.5655594, 2604.61597, -0.822237313, 0, 0.569144547, 0, 1, 0, -0.569144547, 0, -0.822237313))
 	createPad(CFrame.new(-2923.72192, 21.6655579, 2318.51831, -0.84992826, 0, -0.526897788, 0, 1, 0, 0.526897788, 0, -0.84992826))
 	createPad(CFrame.new(1603.17542, 34.8655624, -1199.89258, 0.0219938755, 0, 0.999758184, 0, 1, 0, -0.999758184, 0, 0.0219938755))
-	createPad(CFrame.new(839.591431, 16.0655613, -1504.56055, 0.341827065, 0, 0.939763069, 0, 1, 0, -0.939763069, 0, 0.341827065))
+	createPad(CFrame.new(839.591431, 16.0655613, -1504.56055, 0.112321436, 0, 0.993672431, 0, 1, 0, -0.993672431, 0, 0.112321436)) -- updated orientation: v6b
 	createPad(CFrame.new(-39.5492744, 16.0655613, -1760.46167, 0.997564018, 0, 0.0697565973, 0, 1, 0, -0.0697565973, 0, 0.997564018))
 	createPad(CFrame.new(-1322.63269, 15.3655615, -1902.82642, 1, 0, 0, 0, 1, 0, 0, 0, 1))
 	createPad(CFrame.new(4.76502609, 16.0655613, -1431.66724, 0.292371839, 0, 0.956304729, 0, 1, 0, -0.956304729, 0, 0.292371839))
@@ -929,6 +930,15 @@ do -- highway
 	createPad(CFrame.new(2380.78735, 21.7655811, -3736.62036, -0.99256742, 0, -0.12169598, 0, 1, 0, 0.12169598, 0, -0.99256742))
 	createPad(CFrame.new(-638.150696, 16.2655811, -4872.71924, 1, 0, 4.37113883e-08, 0, 1, 0, -4.37113883e-08, 0, 1))
 	createPad(CFrame.new(-1285.35059, 25.3655815, -3604.01929, 0.969388247, 0, -0.245532796, 0, 1, 0, 0.245532796, 0, 0.969388247))
+	-- added as of v6b
+	createPad(CFrame.new(2008.4176, 16.7864494, -3194.76416, 0.560336292, 0, -0.828265309, 0, 1, 0, 0.828265309, 0, 0.560336292))
+	createPad(CFrame.new(2334.08887, 16.2203369, -2076.00073, 0.983426809, 0, 0.181316912, 0, 1, 0, -0.181316912, 0, 0.983426809))
+	createPad(CFrame.new(334.391815, 16.0655613, -1727.73938, 0.956304789, 0, -0.29237166, 0, 1, 0, 0.29237166, 0, 0.956304789))
+	createPad(CFrame.new(1235.51904, 60.4853477, 1581.39197, 0.37770474, 0, 0.925926089, 0, 1, 0, -0.925926089, 0, 0.37770474))
+	createPad(CFrame.new(-89.0017548, 15.3655653, -596.287476, -0.869870663, 0, -0.49328205, 0, 1, 0, 0.49328205, 0, -0.869870663))
+	createPad(CFrame.new(-136.416748, 14.5321493, 1552.85034, 0.978147626, 0, -0.207911655, 0, 1, 0, 0.207911655, 0, 0.978147626))
+	createPad(CFrame.new(613.840332, 16.5878544, -3571.29126, 0.978147626, 0, -0.207911655, 0, 1, 0, 0.207911655, 0, 0.978147626))
+	createPad(CFrame.new(3084.35986, 61.8144341, -4543.9834, -0.999943376, 0, 0.0106301233, 0, 1, 0, -0.0106301233, 0, -0.999943376))
 
 	createHighwayBlock(Vector3.new(-361.501, 387.53, -2239.6))
 	createHighwayBlock(Vector3.new(1686.499, 387.53, 1856.4))
