@@ -37,7 +37,7 @@ Keypad Multiply - toggle short vehicle info
 
 print("Initiating Jailbreak+...")
 
-local Version = "5b"
+local Version = "5c"
 
 repeat game:GetService("RunService").RenderStepped:Wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 
@@ -606,6 +606,8 @@ Run.Heartbeat:Connect(function()
 	end
 end)
 
+local casino = workspace:WaitForChild("Casino")
+
 local originalProperties = {}
 local doorParts = {}
 local specialNoClipPos = {
@@ -617,7 +619,7 @@ if game.PlaceId == 606849621 then -- init no-clip
 	for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
 		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
 
-		if ((v.Name == "SwingDoor" or v.Name == "SlideDoor") and v:IsA("Model")) or part or v.Name == "Door" then
+		if (((v.Name == "SwingDoor" or v.Name == "SlideDoor") and v:IsA("Model")) or part or v.Name == "Door") and not v:IsDescendantOf(casino) then
 			if part and v:IsA("BasePart") then
 				doorParts[v] = true
 			elseif v.Name == "Door" then
@@ -655,6 +657,8 @@ if game.PlaceId == 606849621 then -- init no-clip
 		originalProperties[v] = {v.Anchored,v.CanCollide,v.Transparency}
 	end
 end
+
+local platform = Instance.new("Model")
 
 local lastUpPress = -1
 
@@ -714,9 +718,234 @@ UIS.InputBegan:Connect(function(input)
 			end)
 		elseif input.KeyCode == Enum.KeyCode.KeypadMultiply then
 			SmallVehicleDetails = not SmallVehicleDetails
+		elseif input.KeyCode == Enum.KeyCode.KeypadPlus then
+			if platform.Parent == workspace then
+				platform.Parent = nil
+			end
 		end
 	end
 end)
+
+do -- highway
+	local liftSpeed = 30 -- stud per second
+	local targetHeight = 387
+
+	-- init
+	local highway = Instance.new("Model")
+	highway.Name = "Highway"
+
+	local lifts = Instance.new("Model")
+	lifts.Name = "Lifts"
+	lifts.Parent = highway
+
+	local function createPad(cframe)
+		local model = Instance.new("Model")
+
+		local pad = Instance.new("Part")
+		pad.Name = "LiftPad"
+		pad.Color = Color3.fromRGB(85, 255, 0)
+		pad.Transparency = 0.5
+		pad.Anchored = true
+		pad.CanCollide = false
+		pad.CanTouch = false
+		pad.Material = Enum.Material.SmoothPlastic
+		pad.Size = Vector3.new(30.9, 1, 17.8)
+		pad.CFrame = cframe
+		pad.CastShadow = false
+		pad.Parent = model
+
+		local lift = Instance.new("Model")
+		lift.Name = "Lift"
+
+		local liftPart = Instance.new("Part")
+		liftPart.BrickColor = BrickColor.new("Earth blue")
+		liftPart.Material = Enum.Material.Concrete
+		liftPart.CanCollide = true
+		liftPart.CanTouch = false
+		liftPart.Anchored = true
+		liftPart.CFrame = cframe-Vector3.new(0,3,0)
+		liftPart.Size = Vector3.new(30.9, 2.1, 17.8)
+		liftPart.Parent = lift
+
+		local collisions = Instance.new("Part")
+		collisions.CanCollide = false
+		collisions.CanTouch = true
+		collisions.Anchored = true
+		collisions.Transparency = 1
+		collisions.CFrame = cframe+Vector3.new(0,6.11,0)
+		collisions.Size = Vector3.new(30.9, 12.8, 17.8)
+		collisions.Parent = lift
+
+		lift.PrimaryPart = liftPart
+
+		lift.Parent = model
+		model.Parent = lifts
+
+		-- code
+
+		local overlapParams = OverlapParams.new()
+		overlapParams.FilterType = Enum.RaycastFilterType.Whitelist
+		overlapParams.MaxParts = 1
+		
+		local timeEntered = nil
+		local timeStartedLifting = nil
+		local timeStartedLowering = nil
+		local beginningHeight = nil
+		
+		local startingCFrame = liftPart.CFrame
+		
+		Run.Heartbeat:Connect(function(dt)
+			if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.PrimaryPart then
+				overlapParams.FilterDescendantsInstances = {player.Character.PrimaryPart}
+				local result = workspace:GetPartBoundsInBox(collisions.CFrame,collisions.Size,overlapParams)
+				
+				if #result > 0 then
+					timeEntered = timeEntered or os.clock()
+					
+					if os.clock()-timeEntered >= 3 and not timeStartedLifting then
+						timeStartedLifting = timeStartedLifting or os.clock()
+						timeStartedLowering = nil
+						beginningHeight = lift.PrimaryPart.Position.Y
+					end
+				elseif timeEntered then
+					timeEntered = nil
+					timeStartedLifting = nil
+					timeStartedLowering = os.clock()
+					beginningHeight = nil
+				end
+				
+				if timeStartedLifting then
+					local check = math.clamp(dt,0,1/50)
+					timeStartedLifting = dt-check+timeStartedLifting
+					local newHeight = math.clamp(beginningHeight+(os.clock()-timeStartedLifting)*liftSpeed,startingCFrame.Position.Y,targetHeight)
+
+					if newHeight == targetHeight then
+						platform.Parent = workspace
+					end
+					lift:PivotTo(startingCFrame+Vector3.new(0,newHeight-startingCFrame.Position.Y,0))
+				elseif timeStartedLowering then
+					--local newHeight = math.clamp(heightReached-((os.clock()-timeStartedLowering)*liftSpeed),startingCFrame.Position.Y,targetHeight)
+					lift:PivotTo(startingCFrame)
+				end
+			end
+		end)
+	end
+
+	local function createHighwayBlock(pos)
+		local hw = Instance.new("Part")
+		hw.CastShadow = false
+		hw.Material = Enum.Material.SmoothPlastic
+		hw.Transparency = 0.6
+		hw.Size = Vector3.new(2048, 1, 2048)
+		hw.Position = pos
+		hw.CanCollide = true
+		hw.CanTouch = false
+		hw.Anchored = true
+
+		local top = Instance.new("Texture")
+		top.Color3 = Color3.new(0,0,1)
+		top.OffsetStudsU = 0
+		top.OffsetStudsV = 0
+		top.StudsPerTileU = 15
+		top.StudsPerTileV = 15
+		top.Texture = "rbxassetid://9933517096"
+		top.ZIndex = 100000
+		top.Face = Enum.NormalId.Top
+
+		local bottom = Instance.new("Texture")
+		bottom.Color3 = Color3.new(0,0,1)
+		bottom.OffsetStudsU = 0
+		bottom.OffsetStudsV = 0
+		bottom.StudsPerTileU = 15
+		bottom.StudsPerTileV = 15
+		bottom.Texture = "rbxassetid://9933517096"
+		bottom.ZIndex = 100000
+		bottom.Face = Enum.NormalId.Bottom
+
+		top.Parent = hw
+		bottom.Parent = hw
+		hw.Parent = platform
+	end
+
+	-- init pads
+	createPad(CFrame.new(102.75, 15.1655579, 1448.80005, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+	createPad(CFrame.new(147.949951, 14.6655579, 1119.09998, 0, 0, -1, 0, 1, 0, 1, 0, 0))
+	createPad(CFrame.new(66.7499542, 15.1655579, 734.400024, 0, 0, -1, 0, 1, 0, 1, 0, 0))
+	createPad(CFrame.new(23.749958, 16.2655582, 236.200027, 0, 0, -1, 0, 1, 0, 1, 0, 0))
+	createPad(CFrame.new(-122.730545, 14.8655586, 490.842194, 0.98480767, 0, 0.173648179, 0, 1, 0, -0.173648179, 0, 0.98480767))
+	createPad(CFrame.new(746.767395, 14.8655586, 388.607086, 0.972369909, 0, 0.233445376, 0, 1, 0, -0.233445376, 0, 0.972369909))
+	createPad(CFrame.new(883.967896, 14.965559, 604.544678, 0.972369909, 0, 0.233445376, 0, 1, 0, -0.233445376, 0, 0.972369909))
+	createPad(CFrame.new(440.623108, 18.3655586, -365.25412, 0.972369909, 0, 0.233445376, 0, 1, 0, -0.233445376, 0, 0.972369909))
+	createPad(CFrame.new(769.420105, 35.0655594, 964.017517, 0.878817081, 0, 0.477158785, 0, 1, 0, -0.477158785, 0, 0.87881708))
+	createPad(CFrame.new(1037.37061, 98.765564, 1186.58984, 0.615661442, 0, 0.788010776, 0, 1, 0, -0.788010776, 0, 0.615661442))
+	createPad(CFrame.new(34.2429619, 18.265564, 2286.05054, -0.601815045, 0, 0.798635483, 0, 1, 0, -0.798635483, 0, -0.601815045))
+	createPad(CFrame.new(74.6213226, 18.265564, 2417.39917, -0.601815045, 0, 0.798635483, 0, 1, 0, -0.798635483, 0, -0.601815045))
+	createPad(CFrame.new(588.863586, 36.5655594, 2373.85132, 0.669130564, 0, 0.74314487, 0, 1, 0, -0.74314487, 0, 0.669130564))
+	createPad(CFrame.new(1443.43591, 82.265564, 1498.24268, 0.707106769, 0, 0.707106769, 0, 1, 0, -0.707106769, 0, 0.707106769))
+	createPad(CFrame.new(1701.26648, 15.1655617, 250.531128, 0.0697564036, 0, -0.997563064, 0, 1, 0, 0.997563064, 0, 0.0697564036))
+	createPad(CFrame.new(1501.33875, 15.1655617, -144.283997, -0.258819073, 0, 0.965925813, 0, 1, 0, -0.965925813, 0, -0.258819073))
+	createPad(CFrame.new(865.29541, 18.4655628, 25.8327065, -0.258819073, 0, 0.965925813, 0, 1, 0, -0.965925813, 0, -0.258819073))
+	createPad(CFrame.new(458.877411, 15.3655624, 300.272797, -0.258819073, 0, 0.965925813, 0, 1, 0, -0.965925813, 0, -0.258819073))
+	createPad(CFrame.new(616.881226, 15.3655624, 729.607727, -0.173648193, 0, 0.98480773, 0, 1, 0, -0.98480773, 0, -0.173648193))
+	createPad(CFrame.new(279.26358, 15.3655624, 910.327515, 0.978147626, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.978147626))
+	createPad(CFrame.new(260.213287, 15.3655624, 1187.17651, -4.37113883e-08, 0, 1, 0, 1, 0, -1, 0, -4.37113883e-08))
+	createPad(CFrame.new(589.684204, 34.9655647, 1652.88989, 0.936672211, 0, 0.350207388, 0, 1, 0, -0.350207388, 0, 0.936672211))
+	createPad(CFrame.new(348.143036, 15.265564, 1720.86438, 0.978147626, 0, 0.2079117, 0, 1, 0, -0.2079117, 0, 0.978147626))
+	createPad(CFrame.new(-257.635437, 15.265564, 1521.25977, 0.207911655, 0, 0.978147626, 0, 1, 0, -0.978147626, 0, 0.207911655))
+	createPad(CFrame.new(-1150.39355, 30.3655643, 1465.61646, -0.42261833, 0, 0.906307757, 0, 1, 0, -0.906307757, 0, -0.42261833))
+	createPad(CFrame.new(-411.521027, 17.9655647, 1924.94714, -0.0523359776, 0, 0.99862951, 0, 1, 0, -0.99862951, 0, -0.0523359776))
+	createPad(CFrame.new(-1581.62671, 15.5655642, 757.421265, -0.990268052, 0, -0.139173195, 0, 1, 0, 0.139173195, 0, -0.990268052))
+	createPad(CFrame.new(-1391.86377, 22.9655647, 182.967117, -0.978147626, 0, 0.207911611, 0, 1, 0, -0.207911611, 0, -0.978147626))
+	createPad(CFrame.new(-1472.14136, 14.2655649, -1367.09607, -0.99862963, 0, -0.0523360372, 0, 1, 0, 0.0523360372, 0, -0.99862963))
+	createPad(CFrame.new(-982.80304, 15.8655653, -1459.43262, -0.99862963, 0, -0.0523360372, 0, 1, 0, 0.0523360372, 0, -0.99862963))
+	createPad(CFrame.new(-863.828918, 16.1655655, -1491.70349, -0.99862963, 0, -0.0523360372, 0, 1, 0, 0.0523360372, 0, -0.99862963))
+	createPad(CFrame.new(-870.711243, 15.3655653, -562.569824, -0.99862963, 0, -0.0523360372, 0, 1, 0, 0.0523360372, 0, -0.99862963))
+	createPad(CFrame.new(-447.101349, 25.3655663, 992.90918, 0.939692616, 0, -0.342020154, 0, 1, 0, 0.342020154, 0, 0.939692616))
+	createPad(CFrame.new(-348.546967, 15.1655674, 1261.75671, -4.37113883e-08, 0, -1, 0, 1, 0, 1, 0, -4.37113883e-08 ))
+	createPad(CFrame.new(-1416.56958, 38.1655579, 2857.61572, -1, 0, -4.37113883e-08, 0, 1, 0, 4.37113883e-08, 0, -1 ))
+	createPad(CFrame.new(-1217.9696, 41.5655594, 2604.61597, -0.822237313, 0, 0.569144547, 0, 1, 0, -0.569144547, 0, -0.822237313))
+	createPad(CFrame.new(-2923.72192, 21.6655579, 2318.51831, -0.84992826, 0, -0.526897788, 0, 1, 0, 0.526897788, 0, -0.84992826))
+	createPad(CFrame.new(1603.17542, 34.8655624, -1199.89258, 0.0219938755, 0, 0.999758184, 0, 1, 0, -0.999758184, 0, 0.0219938755))
+	createPad(CFrame.new(839.591431, 16.0655613, -1504.56055, 0.341827065, 0, 0.939763069, 0, 1, 0, -0.939763069, 0, 0.341827065))
+	createPad(CFrame.new(-39.5492744, 16.0655613, -1760.46167, 0.997564018, 0, 0.0697565973, 0, 1, 0, -0.0697565973, 0, 0.997564018))
+	createPad(CFrame.new(-1322.63269, 15.3655615, -1902.82642, 1, 0, 0, 0, 1, 0, 0, 0, 1))
+	createPad(CFrame.new(4.76502609, 16.0655613, -1431.66724, 0.292371839, 0, 0.956304729, 0, 1, 0, -0.956304729, 0, 0.292371839))
+	createPad(CFrame.new(-171.14743, 16.1655807, -4585.14648, -0.961309791, 0, -0.275469601, 0, 1, 0, 0.275469601, 0, -0.961309791))
+	createPad(CFrame.new(100.426575, 16.1655807, -4746.08398, -0.961309791, 0, -0.275469601, 0, 1, 0, 0.275469601, 0, -0.961309791))
+	createPad(CFrame.new(-710.693115, 16.1655807, -5380.75146, 0.99939692, 0, 0.0347250775, 0, 1, 0, -0.0347250775, 0, 0.99939692))
+	createPad(CFrame.new(-768.022583, 16.1655807, -5943.75977, 0.937023282, 0, 0.349267215, 0, 1, 0, -0.349267215, 0, 0.937023282))
+	createPad(CFrame.new(64.8141632, 16.1655807, -5967.38867, 0.927118361, 0, -0.374768406, 0, 1, 0, 0.374768406, 0, 0.927118361))
+	createPad(CFrame.new(2380.78735, 21.7655811, -3736.62036, -0.99256742, 0, -0.12169598, 0, 1, 0, 0.12169598, 0, -0.99256742))
+	createPad(CFrame.new(-638.150696, 16.2655811, -4872.71924, 1, 0, 4.37113883e-08, 0, 1, 0, -4.37113883e-08, 0, 1))
+	createPad(CFrame.new(-1285.35059, 25.3655815, -3604.01929, 0.969388247, 0, -0.245532796, 0, 1, 0, 0.245532796, 0, 0.969388247))
+
+	createHighwayBlock(Vector3.new(-361.501, 387.53, -2239.6))
+	createHighwayBlock(Vector3.new(1686.499, 387.53, 1856.4))
+	createHighwayBlock(Vector3.new(-361.501, 387.53, 1856.4))
+	createHighwayBlock(Vector3.new(3734.499, 387.53, -4287.6))
+	createHighwayBlock(Vector3.new(1686.499, 387.53, 3904.4))
+	createHighwayBlock(Vector3.new(-2409.501, 387.53, 3904.4))
+	createHighwayBlock(Vector3.new(1686.499, 387.53, -191.6))
+	createHighwayBlock(Vector3.new(1686.499, 387.53, -6335.6))
+	createHighwayBlock(Vector3.new(3734.499, 387.53, -6335.6))
+	createHighwayBlock(Vector3.new(1686.499, 387.53, -4287.6))
+	createHighwayBlock(Vector3.new(3734.499, 387.53, 1856.4))
+	createHighwayBlock(Vector3.new(-2409.501, 387.53, 1856.4))
+	createHighwayBlock(Vector3.new(3734.499, 387.53, 3904.4))
+	createHighwayBlock(Vector3.new(-361.501, 387.53, -6335.6))
+	createHighwayBlock(Vector3.new(-361.501, 387.53, -191.6))
+	createHighwayBlock(Vector3.new(-2409.501, 387.53, -191.6))
+	createHighwayBlock(Vector3.new(-2409.501, 387.53, -4287.6))
+	createHighwayBlock(Vector3.new(3734.499, 387.53, -191.6))
+	createHighwayBlock(Vector3.new(-2409.501, 387.53, -6335.6))
+	createHighwayBlock(Vector3.new(-361.501, 387.53, -4287.6))
+	createHighwayBlock(Vector3.new(-2409.501, 387.53, -2239.6))
+	createHighwayBlock(Vector3.new(1686.499, 387.53, -2239.6))
+	createHighwayBlock(Vector3.new(-361.501, 387.53, 3904.4))
+	createHighwayBlock(Vector3.new(3734.499, 387.53, -2239.6))
+
+	highway.Parent = workspace
+end
 
 syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
