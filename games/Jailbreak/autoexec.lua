@@ -1,9 +1,7 @@
+print("Jailbreak+ autoexec running...")
+
 if not game:IsLoaded() then
 	game.Loaded:Wait()
-end
-
-while game.PlaceId == 0 do
-	game:GetService("RunService").RenderStepped:Wait()
 end
 
 if game.PlaceId == 606849621 or game.PlaceId == 9780994092 then
