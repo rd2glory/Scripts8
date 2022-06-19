@@ -33,11 +33,13 @@ Keypad Subtract - teleport forward (5 studs)
 
 Keypad Multiply - toggle short vehicle info
 
+Keypad Plus - remove highway while driving on it (used on highway only)
+
 ]]--
 
 print("Initiating Jailbreak+...")
 
-local Version = "5c"
+local Version = "6a"
 
 repeat game:GetService("RunService").RenderStepped:Wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
 
@@ -94,6 +96,8 @@ local addGuiOffsetByMake = {
 	Interrogator = 0.6;
 	Trailblazer = 0.175
 }
+
+local platform = Instance.new("Model")
 
 local function makeInfoGui()
 	-- Gui to Lua
@@ -604,6 +608,13 @@ Run.Heartbeat:Connect(function()
 			end
 		end
 	end
+
+	-- Update platform visibility
+	if player.Character and player.Character.PrimaryPart then
+		if player.Character.PrimaryPart.Position.Y < 380 then
+			platform.Parent = nil
+		end
+	end
 end)
 
 local casino = workspace:WaitForChild("Casino")
@@ -657,8 +668,6 @@ if game.PlaceId == 606849621 then -- init no-clip
 		originalProperties[v] = {v.Anchored,v.CanCollide,v.Transparency}
 	end
 end
-
-local platform = Instance.new("Model")
 
 local lastUpPress = -1
 
@@ -835,7 +844,7 @@ do -- highway
 		local hw = Instance.new("Part")
 		hw.CastShadow = false
 		hw.Material = Enum.Material.SmoothPlastic
-		hw.Transparency = 0.6
+		hw.Transparency = 0.725
 		hw.Size = Vector3.new(2048, 1, 2048)
 		hw.Position = pos
 		hw.CanCollide = true
