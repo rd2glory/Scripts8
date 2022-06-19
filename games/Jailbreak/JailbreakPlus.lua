@@ -41,7 +41,9 @@ print("Initiating Jailbreak+...")
 
 local Version = "6a"
 
-repeat game:GetService("RunService").RenderStepped:Wait() until game:IsLoaded() -- i know this is bad coding practice, but i dont really care
+if not game:IsLoaded() then
+	game.Loaded:Wait()
+end
 
 -- Services
 local Players = game:GetService("Players")
