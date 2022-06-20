@@ -231,10 +231,14 @@ local function notify(text,duration)
 		
 		Notification.Hook(e)
 
-		coroutine.resume(coroutine.create(function()
-			task.wait(duration)
-			e:Destroy()
-		end))
+		for i=1,50 do
+			coroutine.resume(coroutine.create(function()
+				pcall(function()
+					task.wait(duration)
+					e:Destroy()
+				end)
+			end))
+		end
 	end)
 end
 
