@@ -39,7 +39,7 @@ Keypad Plus - remove highway while driving on it (used on highway only)
 
 print("Initiating Jailbreak+...")
 
-local Version = "6c"
+local Version = "6d"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
