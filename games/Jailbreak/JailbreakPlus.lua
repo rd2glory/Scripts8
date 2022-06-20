@@ -39,7 +39,7 @@ Keypad Plus - remove highway while driving on it (used on highway only)
 
 print("Initiating Jailbreak+...")
 
-local Version = "6b"
+local Version = "6c"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -221,7 +221,7 @@ end
 
 local function notify(text,duration)
 	text = text or "nil"
-	duration = duration or 3
+	duration = duration or math.min(5, 4 * utf8.len(text) / 50);
 
 	pcall(function()
 		local e = Notification.new({
@@ -230,6 +230,11 @@ local function notify(text,duration)
 		})
 		
 		Notification.Hook(e)
+
+		coroutine.resume(coroutine.create(function()
+			task.wait(duration)
+			e:Destroy()
+		end))
 	end)
 end
 
@@ -600,6 +605,9 @@ Run.Heartbeat:Connect(function()
 
 				nametag:FindFirstChild("||PlayerName").TextColor3 = (v.Team.Name == "Police" and Color3.fromRGB(26, 156, 255)) or (v.Team.Name == "Criminal" and Color3.fromRGB(255, 66, 66)) or (v.Team.Name == "Prisoner" and Color3.fromRGB(255, 141, 26)) or Color3.fromRGB(255,255,255)
 
+				nametag:FindFirstChild("||PlayerName").TextTransparency = c:FindFirstChild("Head").LocalTransparencyModifier
+				nametag.Cash.TextTransparency = c:FindFirstChild("Head").LocalTransparencyModifier
+
 				if percent == 1 then
 					nametag:FindFirstChild("|||Health").Visible = false
 				else
@@ -738,7 +746,7 @@ UIS.InputBegan:Connect(function(input)
 end)
 
 do -- highway
-	local liftSpeed = 30 -- stud per second
+	local liftSpeed = 50 -- stud per second
 	local targetHeight = 387
 
 	-- init
@@ -832,8 +840,10 @@ do -- highway
 
 					if newHeight == targetHeight then
 						platform.Parent = workspace
+						lift:PivotTo(startingCFrame)
+					else
+						lift:PivotTo(startingCFrame+Vector3.new(0,newHeight-startingCFrame.Position.Y,0))
 					end
-					lift:PivotTo(startingCFrame+Vector3.new(0,newHeight-startingCFrame.Position.Y,0))
 				elseif timeStartedLowering then
 					--local newHeight = math.clamp(heightReached-((os.clock()-timeStartedLowering)*liftSpeed),startingCFrame.Position.Y,targetHeight)
 					lift:PivotTo(startingCFrame)
