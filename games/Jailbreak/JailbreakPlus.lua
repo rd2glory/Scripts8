@@ -39,7 +39,7 @@ Keypad Plus - remove highway while driving on it (used on highway only)
 
 print("Initiating Jailbreak+...")
 
-local Version = "6d"
+local Version = "6e"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -230,6 +230,15 @@ local function notify(text,duration)
 		})
 		
 		Notification.Hook(e)
+
+		coroutine.resume(coroutine.create(function()
+			for i=1,50 do
+				pcall(function()
+					task.wait(duration)
+					e:Destroy()
+				end)
+			end
+		end))
 
 		for i=1,50 do
 			coroutine.resume(coroutine.create(function()
@@ -471,6 +480,10 @@ local function editInfo(v,info)
 end
 
 Run.Heartbeat:Connect(function()
+	if not player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Money") then
+		return
+	end
+
 	local money = player.leaderstats.Money.Value
 
 	local toUpdate = {}
@@ -750,7 +763,7 @@ UIS.InputBegan:Connect(function(input)
 end)
 
 do -- highway
-	local liftSpeed = 50 -- stud per second
+	local liftSpeed = 46 -- stud per second
 	local targetHeight = 387
 
 	-- init
