@@ -41,7 +41,7 @@ Keypad Nine - hide all highway lifts and disable all elevators
 
 print("Initiating Jailbreak+...")
 
-local Version = "6f"
+local Version = "6g"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -73,6 +73,8 @@ local NoClipEnabled = false
 local Exiting = false
 local SmallVehicleDetails = false
 local LiftsEnabled = false
+
+local inMainGame = game.PlaceId == 606849621
 
 local robberyVehicles = {
     "BankTruck";
@@ -451,7 +453,7 @@ local function editInfo(v,info)
 end
 
 Run.Heartbeat:Connect(function()
-	if not player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Money") then
+	if not (player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Money")) then
 		return
 	end
 
@@ -753,7 +755,7 @@ local function notify(text,duration)
 	end)
 end
 
-local casino = workspace:WaitForChild("Casino")
+local casino = inMainGame and workspace:WaitForChild("Casino")
 
 local originalProperties = {}
 local doorParts = {}
@@ -762,7 +764,7 @@ local specialNoClipPos = {
 	Vector3.new(150.519, 64.907, 1267.75); -- jew store window
 }
 
-if game.PlaceId == 606849621 then -- init no-clip
+if inMainGame then -- init no-clip
 	for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
 		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
 
@@ -867,13 +869,13 @@ UIS.InputBegan:Connect(function(input)
 			if platform.Parent == workspace then
 				platform.Parent = nil
 			end
-		elseif input.KeyCode == Enum.KeyCode.KeypadNine then
+		elseif input.KeyCode == Enum.KeyCode.KeypadNine and inMainGame then
 			LiftsEnabled = not LiftsEnabled
 		end
 	end
 end)
 
-do -- highway
+if inMainGame then -- highway
 	local liftSpeed = 46 -- stud per second
 	local targetHeight = 387
 
