@@ -35,11 +35,13 @@ Keypad Multiply - toggle short vehicle info
 
 Keypad Plus - remove highway while driving on it (used on highway only)
 
+Keypad Nine - hide all highway lifts and disable all elevators
+
 ]]--
 
 print("Initiating Jailbreak+...")
 
-local Version = "6e"
+local Version = "6f"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -58,7 +60,7 @@ local GameFolder = ReplicatedStorage:WaitForChild("Game")
 local Vehicles = workspace:WaitForChild("Vehicles")
 local VehicleData = require(GameFolder:WaitForChild("Garage"):WaitForChild("VehicleData"))
 
-local Notification = require(ReplicatedStorage:WaitForChild("Game"):WaitForChild("Notification"))
+--local Notification = require(ReplicatedStorage:WaitForChild("Game"):WaitForChild("Notification"))
 
 local born = {}
 local lastDrivenBy = {}
@@ -70,6 +72,7 @@ local player = Players.LocalPlayer
 local NoClipEnabled = false
 local Exiting = false
 local SmallVehicleDetails = false
+local LiftsEnabled = false
 
 local robberyVehicles = {
     "BankTruck";
@@ -217,38 +220,6 @@ local function makeInfoGui()
 	ExtraInfo.TextWrapped = true
 
 	return InfoGui
-end
-
-local function notify(text,duration)
-	text = text or "nil"
-	duration = duration or math.min(5, 4 * utf8.len(text) / 50);
-
-	pcall(function()
-		local e = Notification.new({
-			["Text"] = text;
-			["Duration"] = duration;
-		})
-		
-		Notification.Hook(e)
-
-		coroutine.resume(coroutine.create(function()
-			for i=1,50 do
-				pcall(function()
-					task.wait(duration)
-					e:Destroy()
-				end)
-			end
-		end))
-
-		for i=1,50 do
-			coroutine.resume(coroutine.create(function()
-				pcall(function()
-					task.wait(duration)
-					e:Destroy()
-				end)
-			end))
-		end
-	end)
 end
 
 local function makeNametag()
@@ -643,6 +614,144 @@ Run.Heartbeat:Connect(function()
 		end
 	end
 end)
+local Notification = {}
+do -- notif module
+	-- Decompiled with the Synapse X Luau decompiler.
+	local l__ReplicatedStorage__1 = game:GetService("ReplicatedStorage");
+	local u1 = {};
+	local u2 = false;
+	local v2 = {};
+	v2.__index = v2;
+	local l__LocalPlayer__3 = game:GetService("Players").LocalPlayer;
+	local u4 = require(l__ReplicatedStorage__1.Game.GameUtil);
+	local u5 = require(l__ReplicatedStorage__1.Resource.Settings);
+	local original = nil
+	function v2.Init()
+		--local l__em__3 = p1.em;
+		original = l__LocalPlayer__3.PlayerGui:WaitForChild("NotificationGui",45)
+		local l__NotificationGui__4 = original:Clone();
+		l__NotificationGui__4.Parent = l__LocalPlayer__3.PlayerGui;
+		l__NotificationGui__4.DisplayOrder = 9;
+		v2.Gui = l__NotificationGui__4;
+		local v5 = Instance.new("Sound");
+		v5.SoundId = ("rbxassetid://%d"):format(215658476);
+		v5.Parent = l__NotificationGui__4;
+		v2.TypeWriterSound = v5;
+		u4.OnTeamChanged:Connect(function(p2)
+			v2.SetColor(u5.TeamColor[p2]);
+		end);
+		v2.SetColor(u5.TeamColor[u4.Team]);
+	end;
+	function v2.SetColor(p3)
+		v2.Gui.ContainerNotification.ImageColor3 = p3;
+	end;
+	local u6 = nil;
+	local u7 = require(l__ReplicatedStorage__1.Std.Maid);
+	local function u8()
+		if not (#u1 > 0) then
+			u2 = false;
+			return;
+		end;
+		u2 = true;
+		table.remove(u1, 1):Hook();
+	end;
+	function v2.new(p4)
+		assert(p4 ~= nil);
+		assert(p4.Text ~= nil);
+		if p4.Text == u6 then
+			return;
+		end;
+		local v6 = u1[1];
+		if v6 and v6.Text == p4.Text then
+			return;
+		end;
+		if p4.Duration == nil then
+			p4.Duration = math.min(5, 4 * utf8.len(p4.Text) / 50);
+		end;
+		assert(p4.Duration ~= nil);
+		local v7 = {};
+		setmetatable(v7, v2);
+		v7.Maid = u7.new();
+		v7.Text = p4.Text;
+		v7.Duration = p4.Duration;
+		table.insert(u1, v7);
+		if u2 == false then
+			u8();
+		end;
+		return v7;
+	end;
+	local u9 = require(l__ReplicatedStorage__1.Game.TypeWrite);
+	local u10 = require(l__ReplicatedStorage__1.Std.Audio);
+	function v2.Hook(p5)
+		local l__Gui__8 = v2.Gui;
+		l__Gui__8.Enabled = true;
+		u6 = p5.Text;
+		original.ContainerNotification.Visible = false
+		local u11 = 1;
+		p5.Maid:GiveTask(u9(p5.Text, function(p6)
+			if p5.Maid == nil then
+				return false;
+			end;
+			if u11 == 1 then
+				v2.TypeWriterSound:Play();
+			end;
+			u11 = u11 % 3 + 1;
+			l__Gui__8.ContainerNotification.Message.Text = p6;
+		end, 50));
+		u10.ObjectLocal(l__Gui__8, 700153902, {
+			Volume = 0.25
+		});
+		task.delay(p5.Duration, function()
+			p5:Destroy();
+			original.ContainerNotification.Visible = true
+		end);
+	end;
+	function v2.Destroy(p7)
+		if p7.Maid ~= nil then
+			v2.Gui.Enabled = false;
+			p7.Maid:Destroy();
+			p7.Maid = nil;
+			u6 = nil;
+			u8();
+		end;
+	end;
+
+	v2.Init()
+
+	Notification = v2
+end
+
+local function notify(text,duration)
+	text = text or "nil"
+	duration = duration or math.min(5, 4 * utf8.len(text) / 50);
+
+	pcall(function()
+		local e = Notification.new({
+			["Text"] = text;
+			["Duration"] = duration;
+		})
+		
+		Notification.Hook(e)
+
+		coroutine.resume(coroutine.create(function()
+			for i=1,50 do
+				pcall(function()
+					task.wait(duration)
+					e:Destroy()
+				end)
+			end
+		end))
+
+		for i=1,50 do
+			coroutine.resume(coroutine.create(function()
+				pcall(function()
+					task.wait(duration)
+					e:Destroy()
+				end)
+			end))
+		end
+	end)
+end
 
 local casino = workspace:WaitForChild("Casino")
 
@@ -758,6 +867,8 @@ UIS.InputBegan:Connect(function(input)
 			if platform.Parent == workspace then
 				platform.Parent = nil
 			end
+		elseif input.KeyCode == Enum.KeyCode.KeypadNine then
+			LiftsEnabled = not LiftsEnabled
 		end
 	end
 end)
@@ -831,6 +942,16 @@ do -- highway
 		local startingCFrame = liftPart.CFrame
 		
 		Run.Heartbeat:Connect(function(dt)
+			if not LiftsEnabled then
+				pad.Transparency = 1
+				lift:PivotTo(startingCFrame)
+				liftPart.CanCollide = false
+				liftPart.Transparency = 1
+				return
+			else
+				pad.Transparency = 0.5
+			end
+
 			if player.Character and player.Character:FindFirstChild("Humanoid") and player.Character.PrimaryPart then
 				overlapParams.FilterDescendantsInstances = {player.Character.PrimaryPart}
 				local result = workspace:GetPartBoundsInBox(collisions.CFrame,collisions.Size,overlapParams)
@@ -841,7 +962,7 @@ do -- highway
 					if os.clock()-timeEntered >= 3 and not timeStartedLifting then
 						timeStartedLifting = timeStartedLifting or os.clock()
 						timeStartedLowering = nil
-						beginningHeight = lift.PrimaryPart.Position.Y
+						beginningHeight = liftPart.Position.Y
 					end
 				elseif timeEntered then
 					timeEntered = nil
@@ -858,12 +979,18 @@ do -- highway
 					if newHeight == targetHeight then
 						platform.Parent = workspace
 						lift:PivotTo(startingCFrame)
+						liftPart.CanCollide = false
+						liftPart.Transparency = 1
 					else
 						lift:PivotTo(startingCFrame+Vector3.new(0,newHeight-startingCFrame.Position.Y,0))
+						liftPart.CanCollide = true
+						liftPart.Transparency = 0
 					end
 				elseif timeStartedLowering then
 					--local newHeight = math.clamp(heightReached-((os.clock()-timeStartedLowering)*liftSpeed),startingCFrame.Position.Y,targetHeight)
 					lift:PivotTo(startingCFrame)
+					liftPart.CanCollide = false
+					liftPart.Transparency = 1
 				end
 			end
 		end)
