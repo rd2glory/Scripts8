@@ -29,11 +29,11 @@ Page Down (Page End) - toggle no-clip
 
 Page Up (Page Home) - double tap to rejoin a server with the same place ID.
 
-Keypad Subtract - teleport forward (5 studs)
+Keypad Plus - teleport forward (5 studs)
 
 Keypad Multiply - toggle short vehicle info
 
-Keypad Plus - remove highway while driving on it (used on highway only)
+Keypad Subtract - remove highway while driving on it (used on highway only)
 
 Keypad Nine - hide all highway lifts and disable all elevators
 
@@ -41,7 +41,7 @@ Keypad Nine - hide all highway lifts and disable all elevators
 
 print("Initiating Jailbreak+...")
 
-local Version = "6h"
+local Version = "6i"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -96,13 +96,14 @@ local addGuiOffsetByMake = {
     Model3 = 0.5;
     Roadster = 0.4;
     Chiron = 0.4;
-    Volt = 0.5;
+    Volt = 0.75;
     Monster = 1.5;
 	Drone = -1.4;
 	R8 = 0.1;
 	Torpedo = 1.15;
 	Interrogator = 0.6;
-	Trailblazer = 0.175
+	Trailblazer = 0.175;
+	Boxer = 0.75;
 }
 
 local platform = Instance.new("Model")
@@ -859,14 +860,14 @@ UIS.InputBegan:Connect(function(input)
 				end
 				lastUpPress = now
 			end
-		elseif input.KeyCode == Enum.KeyCode.KeypadMinus then
+		elseif input.KeyCode == Enum.KeyCode.KeypadPlus then
 			pcall(function()
 				local character = player.Character
 				character:PivotTo(character.PrimaryPart.CFrame*CFrame.new(0,0,-5))
 			end)
 		elseif input.KeyCode == Enum.KeyCode.KeypadMultiply then
 			SmallVehicleDetails = not SmallVehicleDetails
-		elseif input.KeyCode == Enum.KeyCode.KeypadPlus then
+		elseif input.KeyCode == Enum.KeyCode.KeypadMinus then
 			if platform.Parent == workspace then
 				platform.Parent = nil
 			end
