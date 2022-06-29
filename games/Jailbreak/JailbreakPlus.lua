@@ -29,7 +29,7 @@ Page Down (Page End) - toggle no-clip
 
 Page Up (Page Home) - double tap to rejoin a server with the same place ID.
 
-Keypad Plus - teleport forward (5 studs)
+Keypad Plus or Q - teleport forward (5 studs)
 
 Keypad Multiply - toggle short vehicle info
 
@@ -41,7 +41,7 @@ Keypad Nine - hide all highway lifts and disable all elevators
 
 print("Initiating Jailbreak+...")
 
-local Version = "6i"
+local Version = "6j"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -813,7 +813,7 @@ local lastUpPress = -1
 
 local inCancelPeriod = false
 
-UIS.InputBegan:Connect(function(input)
+UIS.InputBegan:Connect(function(input,gpe)
 	if input.UserInputType == Enum.UserInputType.Keyboard and not Exiting then
 		if input.KeyCode == Enum.KeyCode.PageDown then
 			if game.PlaceId ~= 606849621 then
@@ -860,7 +860,7 @@ UIS.InputBegan:Connect(function(input)
 				end
 				lastUpPress = now
 			end
-		elseif input.KeyCode == Enum.KeyCode.KeypadPlus then
+		elseif input.KeyCode == Enum.KeyCode.KeypadPlus or (input.KeyCode == Enum.KeyCode.Q and not gpe) then
 			pcall(function()
 				local character = player.Character
 				character:PivotTo(character.PrimaryPart.CFrame*CFrame.new(0,0,-5))
