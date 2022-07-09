@@ -41,7 +41,7 @@ Keypad Nine - hide all highway lifts and disable all elevators
 
 print("Initiating Jailbreak+...")
 
-local Version = "6k"
+local Version = "7a"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -1319,4 +1319,4 @@ end
 syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
 print("Jailbreak+ (v"..Version..") initiated sucessfully")
-notify("Jailbreak+ (v"..Version..") initiated", 6.5)
+notify("Jailbreak+ (v"..Version..") initiated", 6)
