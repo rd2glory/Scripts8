@@ -4,7 +4,7 @@ if not game:IsLoaded() then
 	game.Loaded:Wait()
 end
 
-if game.PlaceId == 606849621 or game.PlaceId == 9780994092 then
+if game.PlaceId == 606849621 then
 	repeat game:GetService("RunService").RenderStepped:Wait() until game.PlaceVersion ~= 0
 
     -- code
@@ -212,6 +212,8 @@ if game.PlaceId == 606849621 or game.PlaceId == 9780994092 then
         print("Place version ("..game.PlaceVersion..") is safe for launching JB+")
         loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()
     end
+else
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()
 end
 --[[ old
     
