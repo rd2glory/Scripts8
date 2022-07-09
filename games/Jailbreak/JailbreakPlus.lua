@@ -41,7 +41,7 @@ Keypad Nine - hide all highway lifts and disable all elevators
 
 print("Initiating Jailbreak+...")
 
-local Version = "7a"
+local Version = "7b"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
