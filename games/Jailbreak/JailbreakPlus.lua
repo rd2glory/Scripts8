@@ -1134,7 +1134,7 @@ if inMainGame then -- highway
 end
 
 if not inMainGame then
-	task.wait(5)
+	task.wait(3)
 	-- init
 	local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/misc/venyx.lua"))()
 	local trader = library.new("Trader+")
@@ -1153,6 +1153,8 @@ if not inMainGame then
 	local replaceMain = replacer:addSection("Main")
 	local itemsSection = replacer:addSection("Items")
 	local keybindsMain = keybinds:addSection("Main")
+
+	task.wait(1)
 
 	local Replacing do
 		-- Gui to Lua
@@ -1284,7 +1286,7 @@ if not inMainGame then
 
 		Replacing.Enabled = false
 	end
-
+	
 	-- elements
 	replaceMain:addToggle("Auto-Ready",autoReady,function(value)
 		autoReady = value
