@@ -767,6 +767,8 @@ local specialNoClipPos = {
 	Vector3.new(150.519, 64.907, 1267.75); -- jew store window
 }
 
+task.wait(1)
+
 if inMainGame then -- init no-clip
 	for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
 		local part = v.Name == "TheDoor" or v.Name == "TheGlass"
@@ -1132,6 +1134,7 @@ if inMainGame then -- highway
 end
 
 if not inMainGame then
+	task.wait(5)
 	-- init
 	local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/misc/venyx.lua"))()
 	local trader = library.new("Trader+")
