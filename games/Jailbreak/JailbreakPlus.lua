@@ -37,11 +37,13 @@ Keypad Subtract - remove highway while driving on it (used on highway only)
 
 Keypad Nine - hide all highway lifts and disable all elevators
 
+Keypad Eight - remove all robbery lasers (cannot be undone)
+
 ]]--
 
 print("Initiating Jailbreak+...")
 
-local Version = "7d"
+local Version = "8a"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -883,7 +885,10 @@ UIS.InputBegan:Connect(function(input,gpe)
 		elseif input.KeyCode == Enum.KeyCode.KeypadNine and inMainGame then
 			LiftsEnabled = not LiftsEnabled
 		elseif input.KeyCode == Enum.KeyCode.KeypadEight and inMainGame and LaserRemoveEvent == nil then
+			notify("Robbery lasers removed (cannot be undone)")
+
 			LaserRemoveEvent = true
+
 			while Run.Heartbeat:Wait() do
 				local jewStore = workspace.Jewelrys:GetChildren()[1]
 				for _,j in pairs(jewStore.Floors:GetChildren()) do
@@ -948,6 +953,13 @@ UIS.InputBegan:Connect(function(input,gpe)
 						v:Destroy()
 					end
 				end
+
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
 			end
 		end
 	end
