@@ -2210,7 +2210,9 @@ local replaceMain = replacer:addSection("Main")
 local itemsSection = replacer:addSection("Items")
 local keybindsMain = keybinds:addSection("Main")
 
-local Replacing do
+local Replacing
+
+do
     -- Gui to Lua
     -- Version: 3.2
 
@@ -2357,6 +2359,7 @@ end)
 -- add item replaces
 for i=1,8 do
     HB:Wait()
+    task.wait(0.1)
     itemsSection:addTextbox("Item "..tostring(i),nil,function(value)
         if value == "" then
             items[i] = nil
