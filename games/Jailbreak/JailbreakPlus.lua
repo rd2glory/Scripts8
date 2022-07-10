@@ -883,7 +883,8 @@ UIS.InputBegan:Connect(function(input,gpe)
 		elseif input.KeyCode == Enum.KeyCode.KeypadNine and inMainGame then
 			LiftsEnabled = not LiftsEnabled
 		elseif input.KeyCode == Enum.KeyCode.KeypadEight and inMainGame and LaserRemoveEvent == nil then
-			LaserRemoveEvent = Run.Heartbeat:Connect(function()
+			LaserRemoveEvent = true
+			while Run.Heartbeat:Wait() do
 				local jewStore = workspace.Jewelrys:GetChildren()[1]
 				for _,j in pairs(jewStore.Floors:GetChildren()) do
 					for _,v in pairs(j:GetChildren()) do
@@ -940,12 +941,14 @@ UIS.InputBegan:Connect(function(input,gpe)
 				workspace.Casino.LasersMoving:ClearAllChildren()
 				workspace.Casino.CamerasMoving:ClearAllChildren() -- might remove later
 
+				Run.Heartbeat:Wait()
+
 				for _,v in pairs(workspace.Casino.LaserCarousel.InnerModel:GetChildren()) do
 					if v.Name == "Part" then
 						v:Destroy()
 					end
 				end
-			end)
+			end
 		end
 	end
 end)
