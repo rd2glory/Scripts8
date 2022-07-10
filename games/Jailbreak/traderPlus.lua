@@ -8,7 +8,7 @@ local HB = game:GetService("RunService").Heartbeat
 local player = Players.LocalPlayer
 
 -- init
-local defaultTheme = "Sentinel"
+local defaultTheme = "Midnight"
 local trader = Library.CreateLib("Trader+", defaultTheme)
 
 -- variables
