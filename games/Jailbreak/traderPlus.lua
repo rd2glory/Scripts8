@@ -149,6 +149,7 @@ local lib do
             
             while key.UserInputType ~= Enum.UserInputType.Keyboard	 do
                 key = input.InputBegan:Wait()
+                utility:Wait()
             end
             
             wait() -- overlapping connection
@@ -903,6 +904,8 @@ local lib do
             
             return textbox
         end
+
+        task.wait(0.1)
         
         function section:addKeybind(title, default, callback, changedCallback)
             local keybind = utility:Create("ImageButton", {
@@ -1532,6 +1535,8 @@ local lib do
             
             return colorpicker
         end
+
+        task.wait(0.1)
         
         function section:addSlider(title, default, min, max, callback)
             local slider = utility:Create("ImageButton", {
@@ -2067,6 +2072,8 @@ local lib do
                 end
             end
         end
+
+        task.wait(0.1)
         
         function section:updateSlider(slider, title, value, min, max, lvalue)
             slider = self:getModule(slider)
@@ -2260,6 +2267,8 @@ local Replacing do
 
 end
 
+task.wait(0.05)
+
 local function replace()
     local function errorReplacing(reason)
         trader:Notify("Replace Error",reason)
@@ -2335,7 +2344,7 @@ local function replace()
 
     Replacing.Enabled = false
 end
-task.wait(1)
+task.wait(0.5)
 -- elements
 replaceMain:addToggle("Auto-Ready",autoReady,function(value)
     autoReady = value
@@ -2347,6 +2356,7 @@ end)
 
 -- add item replaces
 for i=1,8 do
+    HB:Wait()
     itemsSection:addTextbox("Item "..tostring(i),nil,function(value)
         if value == "" then
             items[i] = nil
