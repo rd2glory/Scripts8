@@ -8,7 +8,8 @@ local HB = game:GetService("RunService").Heartbeat
 local player = Players.LocalPlayer
 
 -- init
-local trader = Library.CreateLib("Trader+", "GrapeTheme")
+local defaultTheme = "Sentinel"
+local trader = Library.CreateLib("Trader+", defaultTheme)
 
 -- variables
 local updateOffering = RS.TradeUpdateOffering
@@ -21,12 +22,12 @@ local categories = {"vehicle","furniture","weapon skin","texture","rim","spoiler
 
 -- pages
 local replacer = trader:NewTab("Replacer")
-local keybinds = trader:NewTab("Keybinds")
+local ui = trader:NewTab("UI")
 
 -- sections
 local replaceMain = replacer:NewSection("Main")
-local itemsSection = replacer:NewSection("Items")
-local keybindsMain = keybinds:NewSection("Main")
+local keybindsMain = ui:NewSection("Keybinds")
+local themeMain = ui:NewSection("Theme")
 
 local Replacing
 
@@ -175,11 +176,25 @@ replaceMain:NewButton("Replace","Replace current offerings with values given",re
 keybindsMain:NewKeybind("Toggle UI", "Default is LeftCtrl", Enum.KeyCode.LeftControl, function()
 	Library:ToggleUI()
 end)
+--[[
+themeMain:NewDropdown("Current Theme", "Default is "..defaultTheme, {    LightTheme
+DarkTheme
+GrapeTheme
+BloodTheme
+Ocean
+Midnight
+Sentinel
+Synapse}, function(currentOption)
+    print(currentOption)
+end)
+]]--
 
--- add item replaces
+-- add item slots
 for i=1,8 do
     HB:Wait()
-    itemsSection:NewTextBox("Item "..tostring(i),"Use name in inventory, leave blank for nothing",function(value)
+    local thisItemSection = replacer:NewSection("Item "..tostring(i))
+
+    thisItemSection:NewTextBox("Item Name","Use name in inventory, leave blank for nothing",function(value)
         if value == "" then
             items[i] = nil
         else
@@ -189,7 +204,7 @@ for i=1,8 do
 
     itemCategories[i] = "vehicle"
 
-    itemsSection:NewTextBox("Category","What category to search for the item in (default: vehicle)",function(value)
+    thisItemSection:NewTextBox("Category","What category to search for the item in (default: vehicle)",function(value)
         if value == "" then
             value = "vehicle"
         end
