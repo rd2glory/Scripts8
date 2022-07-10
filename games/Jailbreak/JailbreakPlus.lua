@@ -43,7 +43,7 @@ Keypad Eight - remove all robbery lasers (cannot be undone)
 
 print("Initiating Jailbreak+...")
 
-local Version = "8a"
+local Version = "8b"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -890,76 +890,80 @@ UIS.InputBegan:Connect(function(input,gpe)
 			LaserRemoveEvent = true
 
 			while Run.Heartbeat:Wait() do
-				local jewStore = workspace.Jewelrys:GetChildren()[1]
-				for _,j in pairs(jewStore.Floors:GetChildren()) do
-					for _,v in pairs(j:GetChildren()) do
-						if not (v.Name == "Model" and v:IsA("Model")) then
-							v:Destroy()
-						end
-					end
-				end
-				for _,v in pairs(jewStore:GetChildren()) do
-					if v:IsA("BasePart") and v.Name == "BarbedWire" then
-						v:Destroy()
-					end
-				end
-
-				Run.Heartbeat:Wait()
-
-				local bank = workspace.Banks:GetChildren()[1]
-
-				for _,j in pairs(bank.Layout:GetChildren()) do
-					for _,v in pairs(j.Lasers:GetChildren()) do
-						if v:IsA("BasePart") then
-							v:Destroy()
-						end
-					end
-				end
-
-				for _,v in pairs(bank:GetDescendants()) do
-					if v.Name == "BarbedWire" and v:IsA("BasePart") then
-						v:Destroy()
-					end
-				end
-
-				Run.Heartbeat:Wait()
-
-				local light = workspace.Museum:FindFirstChild("Lights")
-
-				if light then
-					light:Destroy()
-				end
-
-				for _,v in pairs(workspace:GetChildren()) do
-					if v:IsA("Model") and v.Name == "Model" then
-						for _,j in pairs(v:GetDescendants()) do
-							if j:IsA("BasePart") and j.Name == "BarbedWire" and j.Color ~= Color3.fromRGB(202, 203, 209) then
-								j:Destroy()
+				pcall(function()
+					local jewStore = workspace.Jewelrys:GetChildren()[1]
+					for _,j in pairs(jewStore.Floors:GetChildren()) do
+						for _,v in pairs(j:GetChildren()) do
+							if not (v.Name == "Model" and v:IsA("Model")) then
+								v:Destroy()
 							end
 						end
 					end
-				end
-
-				Run.Heartbeat:Wait()
-
-				workspace.Casino.Lasers:ClearAllChildren()
-				workspace.Casino.LasersMoving:ClearAllChildren()
-				workspace.Casino.CamerasMoving:ClearAllChildren() -- might remove later
-
-				Run.Heartbeat:Wait()
-
-				for _,v in pairs(workspace.Casino.LaserCarousel.InnerModel:GetChildren()) do
-					if v.Name == "Part" then
-						v:Destroy()
+					for _,v in pairs(jewStore:GetChildren()) do
+						if v:IsA("BasePart") and v.Name == "BarbedWire" then
+							v:Destroy()
+						end
 					end
-				end
 
-				Run.Heartbeat:Wait()
-				Run.Heartbeat:Wait()
-				Run.Heartbeat:Wait()
-				Run.Heartbeat:Wait()
-				Run.Heartbeat:Wait()
-				Run.Heartbeat:Wait()
+					Run.Heartbeat:Wait()
+
+					local bank = workspace.Banks:GetChildren()[1]
+
+					for _,j in pairs(bank.Layout:GetChildren()) do
+						if j:FindFirstChild("Lasers") then
+							for _,v in pairs(j.Lasers:GetChildren()) do
+								if v:IsA("BasePart") then
+									v:Destroy()
+								end
+							end
+						end
+					end
+
+					for _,v in pairs(bank:GetDescendants()) do
+						if v.Name == "BarbedWire" and v:IsA("BasePart") then
+							v:Destroy()
+						end
+					end
+
+					Run.Heartbeat:Wait()
+
+					local light = workspace.Museum:FindFirstChild("Lights")
+
+					if light then
+						light:Destroy()
+					end
+
+					for _,v in pairs(workspace:GetChildren()) do
+						if v:IsA("Model") and v.Name == "Model" then
+							for _,j in pairs(v:GetDescendants()) do
+								if j:IsA("BasePart") and j.Name == "BarbedWire" and j.Color ~= Color3.fromRGB(202, 203, 209) then
+									j:Destroy()
+								end
+							end
+						end
+					end
+
+					Run.Heartbeat:Wait()
+
+					workspace.Casino.Lasers:ClearAllChildren()
+					workspace.Casino.LasersMoving:ClearAllChildren()
+					workspace.Casino.CamerasMoving:ClearAllChildren() -- might remove later
+
+					Run.Heartbeat:Wait()
+
+					for _,v in pairs(workspace.Casino.LaserCarousel.InnerModel:GetChildren()) do
+						if v.Name == "Part" then
+							v:Destroy()
+						end
+					end
+
+					Run.Heartbeat:Wait()
+					Run.Heartbeat:Wait()
+					Run.Heartbeat:Wait()
+					Run.Heartbeat:Wait()
+					Run.Heartbeat:Wait()
+					Run.Heartbeat:Wait()
+				end)
 			end
 		end
 	end
