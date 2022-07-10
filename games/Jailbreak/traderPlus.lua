@@ -15,6 +15,9 @@ local updateOffering = RS.TradeUpdateOffering
 
 local autoReady = false
 local items = {}
+local itemCategories = {}
+
+local categories = {"vehicle","furniture","weapon skin","texture","rim","spoiler","tire","horn","color"}
 
 -- pages
 local replacer = trader:NewTab("Replacer")
@@ -117,17 +120,19 @@ local function replace()
 
             local scroll = tradeFrame():FindFirstChild("ItemTypesContainer").ScrollingGrid
 
-            while scroll["1"].UIStroke.Enabled == false do
-                local e = getconnections(scroll["1"].Activated)
-                e[1]:Fire()
-                HB:Wait()
-            end
-
-            local container = tradeFrame().ItemsContainer.ScrollingGrid
-
             local itemIDs = {}
 
-            for _,v in ipairs(items) do
+            for i,v in ipairs(items) do
+                local num = tostring(table.find(categories,itemCategories[i]) or 1)
+
+                while scroll[num].UIStroke.Enabled == false do
+                    local e = getconnections(scroll[num].Activated)
+                    e[1]:Fire()
+                    HB:Wait()
+                end
+    
+                local container = tradeFrame().ItemsContainer.ScrollingGrid
+
                 for _,j in pairs(container:GetChildren()) do
                     local thisId = j.Name
                     local thisModel = j.Title.Text.Text
@@ -180,5 +185,15 @@ for i=1,8 do
         else
             items[i] = value
         end
+    end)
+
+    itemCategories[i] = "vehicle"
+
+    itemsSection:NewTextBox("Category","What category to search for the item in (default: vehicle)",function(value)
+        if value == "" then
+            value = "vehicle"
+        end
+
+        itemCategories[i] = value
     end)
 end
