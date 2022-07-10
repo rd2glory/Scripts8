@@ -131,14 +131,14 @@ local function replace()
                     e[1]:Fire()
                     HB:Wait()
                 end
-    
+
                 local container = tradeFrame().ItemsContainer.ScrollingGrid
 
                 for _,j in pairs(container:GetChildren()) do
                     local thisId = j.Name
                     local thisModel = j.Title.Text.Text
 
-                    if string.lower(thisModel) == string.lower(v) then
+                    if string.lower(thisModel) == string.lower(v) and not table.find(itemIDs,thisId) then
                         table.insert(itemIDs,thisId)
                         break
                     end
@@ -195,6 +195,8 @@ for i=1,8 do
     local thisItemSection = replacer:NewSection("Item "..tostring(i))
 
     thisItemSection:NewTextBox("Item Name","Use name in inventory, leave blank for nothing",function(value)
+        value = string.lower(value)
+
         if value == "" then
             items[i] = nil
         else
@@ -205,6 +207,8 @@ for i=1,8 do
     itemCategories[i] = "vehicle"
 
     thisItemSection:NewTextBox("Category","What category to search for the item in (default: vehicle)",function(value)
+        value = string.lower(value)
+
         if value == "" then
             value = "vehicle"
         end
