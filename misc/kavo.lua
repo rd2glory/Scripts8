@@ -883,7 +883,7 @@ function Kavo.CreateLib(kavName, themeList)
 
 
                 updateSectionFrame()
-                                UpdateSize()
+                UpdateSize()
             
                 local btn = textboxElement
                 local infBtn = viewInfo
@@ -924,13 +924,8 @@ function Kavo.CreateLib(kavName, themeList)
                         end
                         Utility:TweenObject(blurFrame, {BackgroundTransparency = 1}, 0.2)
                     end
-                    if not EnterPressed then 
-                        return
-                    else
-                        callback(TextBox.Text)
-                        wait(0.18)
-                        TextBox.Text = ""  
-                    end
+                    -- forked 7/10/22
+                    callback(TextBox.Text,EnterPressed)
                 end)
 
                 viewInfo.MouseButton1Click:Connect(function()
