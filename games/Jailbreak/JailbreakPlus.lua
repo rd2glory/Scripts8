@@ -77,6 +77,10 @@ local LiftsEnabled = false
 
 local inMainGame = game.PlaceId == 606849621
 
+if not inMainGame then
+	task.wait(4)
+end
+
 local robberyVehicles = {
     "BankTruck";
 }
