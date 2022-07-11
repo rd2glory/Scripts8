@@ -43,7 +43,7 @@ Keypad Eight - remove all robbery lasers (cannot be undone)
 
 print("Initiating Jailbreak+...")
 
-local Version = "8b"
+local Version = "8c"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -904,19 +904,15 @@ UIS.InputBegan:Connect(function(input,gpe)
 							v:Destroy()
 						end
 					end
-
+				end)
+				pcall(function()
 					Run.Heartbeat:Wait()
 
 					local bank = workspace.Banks:GetChildren()[1]
+					local floor = bank.Layout:GetChildren()[1]
 
-					for _,j in pairs(bank.Layout:GetChildren()) do
-						if j:FindFirstChild("Lasers") then
-							for _,v in pairs(j.Lasers:GetChildren()) do
-								if v:IsA("BasePart") then
-									v:Destroy()
-								end
-							end
-						end
+					if floor:FindFirstChild("Lasers") then
+						floor.Lasers:ClearAllChildren()
 					end
 
 					for _,v in pairs(bank:GetDescendants()) do
@@ -924,13 +920,14 @@ UIS.InputBegan:Connect(function(input,gpe)
 							v:Destroy()
 						end
 					end
-
+				end)
+				pcall(function()
 					Run.Heartbeat:Wait()
 
 					local light = workspace.Museum:FindFirstChild("Lights")
 
 					if light then
-						light:Destroy()
+						light:ClearAllChildren()
 					end
 
 					for _,v in pairs(workspace:GetChildren()) do
@@ -957,13 +954,14 @@ UIS.InputBegan:Connect(function(input,gpe)
 						end
 					end
 
-					Run.Heartbeat:Wait()
-					Run.Heartbeat:Wait()
-					Run.Heartbeat:Wait()
-					Run.Heartbeat:Wait()
-					Run.Heartbeat:Wait()
-					Run.Heartbeat:Wait()
 				end)
+
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
+				Run.Heartbeat:Wait()
 			end
 		end
 	end
