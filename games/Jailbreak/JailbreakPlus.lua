@@ -39,11 +39,15 @@ Keypad Nine - hide all highway lifts and disable all elevators
 
 Keypad Eight - remove all robbery lasers (cannot be undone)
 
+Keypad Zero - stop vehicle customization
+
+Keypad One-Six - vehicle customizations
+
 ]]--
 
 print("Initiating Jailbreak+...")
 
-local Version = "8c"
+local Version = "9a"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -58,16 +62,21 @@ local TS = game:GetService("TeleportService")
 local VU = game:GetService("VirtualUser")
 
 -- Variables
-local GameFolder = ReplicatedStorage:WaitForChild("Game")
+local GameFolder = ReplicatedStorage:WaitForChild("Game",60)
+local EquipItem = ReplicatedStorage:WaitForChild("GarageEquipItem",60)
+local PurchaseItem = ReplicatedStorage:WaitForChild("GaragePurchaseItem",60)
 
 local Vehicles = workspace:WaitForChild("Vehicles")
 local VehicleData = require(GameFolder:WaitForChild("Garage"):WaitForChild("VehicleData"))
 
+local LICENSE_PLATE = "Yessir"
+
 --local Notification = require(ReplicatedStorage:WaitForChild("Game"):WaitForChild("Notification"))
 
-local powerPlantLasers = nil
+local fastRob = nil
 local born = {}
 local lastDrivenBy = {}
+local customization
 
 local player = Players.LocalPlayer
 --local playerGui = player:WaitForChild("PlayerGui")
@@ -696,28 +705,30 @@ do -- notif module
 	local u9 = require(l__ReplicatedStorage__1.Game.TypeWrite);
 	local u10 = require(l__ReplicatedStorage__1.Std.Audio);
 	function v2.Hook(p5)
-		local l__Gui__8 = v2.Gui;
-		l__Gui__8.Enabled = true;
-		u6 = p5.Text;
-		original.ContainerNotification.Visible = false
-		local u11 = 1;
-		p5.Maid:GiveTask(u9(p5.Text, function(p6)
-			if p5.Maid == nil then
-				return false;
-			end;
-			if u11 == 1 then
-				v2.TypeWriterSound:Play();
-			end;
-			u11 = u11 % 3 + 1;
-			l__Gui__8.ContainerNotification.Message.Text = p6;
-		end, 50));
-		u10.ObjectLocal(l__Gui__8, 700153902, {
-			Volume = 0.25
-		});
-		task.delay(p5.Duration, function()
-			p5:Destroy();
-			original.ContainerNotification.Visible = true
-		end);
+		pcall(function()
+			local l__Gui__8 = v2.Gui;
+			l__Gui__8.Enabled = true;
+			u6 = p5.Text;
+			original.ContainerNotification.Visible = false
+			local u11 = 1;
+			p5.Maid:GiveTask(u9(p5.Text, function(p6)
+				if p5.Maid == nil then
+					return false;
+				end;
+				if u11 == 1 then
+					v2.TypeWriterSound:Play();
+				end;
+				u11 = u11 % 3 + 1;
+				l__Gui__8.ContainerNotification.Message.Text = p6;
+			end, 50));
+			u10.ObjectLocal(l__Gui__8, 700153902, {
+				Volume = 0.25
+			});
+			task.delay(p5.Duration, function()
+				p5:Destroy();
+				original.ContainerNotification.Visible = true
+			end);
+		end)
 	end;
 	function v2.Destroy(p7)
 		if p7.Maid ~= nil then
@@ -766,6 +777,16 @@ local function notify(text,duration)
 	end)
 end
 
+local function getLocalPlayerVehicle()
+    for _,v in pairs(Vehicles:GetChildren()) do
+        if v:FindFirstChild("Seat") and v.Seat:FindFirstChild("PlayerName") and v:FindFirstChild("Make") and v:FindFirstChild("Engine") then
+            if v.Seat.PlayerName.Value == player.Name then
+                return v
+            end
+        end
+    end
+end
+
 local casino = inMainGame and workspace:WaitForChild("Casino")
 
 local originalProperties = {}
@@ -774,6 +795,12 @@ local specialNoClipPos = {
 	Vector3.new(1159.342, 118.258, 1328.051); -- msm window
 	Vector3.new(150.519, 64.907, 1267.75); -- jew store window
 }
+
+local function equip(list)
+	for i,v in pairs(list) do
+		EquipItem:FireServer(i,v)
+	end
+end
 
 task.wait(1)
 
@@ -823,6 +850,8 @@ end
 local lastUpPress = -1
 
 local inCancelPeriod = false
+
+local _last_customized = nil
 
 UIS.InputBegan:Connect(function(input,gpe)
 	if input.UserInputType == Enum.UserInputType.Keyboard and not Exiting then
@@ -963,7 +992,206 @@ UIS.InputBegan:Connect(function(input,gpe)
 				Run.Heartbeat:Wait()
 				Run.Heartbeat:Wait()
 			end
+		elseif input.KeyCode == Enum.KeyCode.KeypadSeven and fastRob == nil and inMainGame then
+			fastRob = true
+			notify("Robbery shortcuts enabled (cannot be undone)")
+			for _,v in pairs(workspace:GetChildren()) do
+				if v:IsA("BasePart") and v.Name == "Part" then
+					if (v.Size-Vector3.new(1.1, 91.1, 70.3)).Magnitude < 0.1 and (v.Position-Vector3.new(92.729, -22.159, 2170.273)).Magnitude < 0.1 then
+						v:Destroy()
+					elseif (v.Size-Vector3.new(17, 1, 61)).Magnitude < 0.1 and (v.Position-Vector3.new(107.848, -18.376, 2129.646)).Magnitude < 0.1 then
+						v.CFrame = CFrame.new(102.156914, -14.1233616, 2140.41724, -0.882818222, 0.0191042256, 0.469327837, 0, 0.999172568, -0.0406718664, -0.469716519, -0.0359058268, -0.882087767)
+
+					elseif (v.Size-Vector3.new(17, 1, 61)).Magnitude < 0.1 and (v.Position-Vector3.new(89.887, -18.473, 2096.522)).Magnitude < 0.1 then
+						v.CFrame = CFrame.new(69.6064529, -9.79850388, 2189.36572, -0.774876893, 0.0699020922, 0.628235281, 0.00373038976, 0.994355083, -0.106038146, -0.632101297, -0.0798229426, -0.770763457)
+					end
+				end
+			end
+			while Run.Heartbeat:Wait() do
+				pcall(function()
+					local jewStore = workspace.Jewelrys:GetChildren()[1]
+					jewStore.Floors:ClearAllChildren()
+				end)
+			end
+		elseif input.KeyCode == Enum.KeyCode.KeypadZero then
+			notify("Customizations off")
+			customization = nil
+		elseif input.KeyCode == Enum.KeyCode.KeypadOne then
+			notify("Checker customization equipped")
+			_last_customized = os.clock()
+			customization = {
+				["Texture"] = "Checker";
+				["SecondTexture"] = "Checker";
+				["BodyColor"] = "Gold";
+				["SecondBodyColor"] = "Gold";
+				["Engine"] = "Level 5";
+				["Glow"] = "Chrome";
+				["Horn"] = "Cucaracha";
+				["Rim"] = "Spinner";
+				["WheelColor"] = "Gold";
+				["Tire"] = "Jailbreak";
+				["SuspensionHeight"] = "High";
+				["Brakes"] = "Level 3";
+				["WindowColor"] = "Gold";
+				["WindowTint"] = "60";
+				["InteriorMainColor"] = "Gold";
+				["InteriorDetailColor"] = "Gold";
+				["SeatColor"] = "Gold";
+				["Spoiler"] = "Spare";
+				["SpoilerColor"] = "Gold";
+				["HeadlightsColor"] = "Gold";
+			}
+		elseif input.KeyCode == Enum.KeyCode.KeypadTwo then
+			notify("Pixel customization equipped")
+			_last_customized = os.clock()
+			customization = {
+				["Texture"] = "Pixel";
+				["SecondTexture"] = "Pixel";
+				["BodyColor"] = "Gold";
+				["SecondBodyColor"] = "Gold";
+				["Engine"] = "Level 5";
+				["Glow"] = "Chrome";
+				["Horn"] = "Cucaracha";
+				["Rim"] = "Spinner";
+				["WheelColor"] = "Gold";
+				["Tire"] = "Jailbreak";
+				["SuspensionHeight"] = "High";
+				["Brakes"] = "Level 3";
+				["WindowColor"] = "Gold";
+				["WindowTint"] = "60";
+				["InteriorMainColor"] = "Gold";
+				["InteriorDetailColor"] = "Gold";
+				["SeatColor"] = "Gold";
+				["Spoiler"] = "3Billion";
+				["SpoilerColor"] = "Gold";
+				["HeadlightsColor"] = "Gold";
+			}
+		elseif input.KeyCode == Enum.KeyCode.KeypadThree then
+			notify("Spy customization equipped")
+			_last_customized = os.clock()
+			customization = {
+				["Texture"] = "None";
+				["SecondTexture"] = "None";
+				["BodyColor"] = "Vantablack";
+				["SecondBodyColor"] = "Vantablack";
+				["Engine"] = "Level 5";
+				["Glow"] = "Black";
+				["Horn"] = "Cucaracha";
+				["Rim"] = "Brickset";
+				["WheelColor"] = "Vantablack";
+				["Tire"] = "Jailbreak";
+				["SuspensionHeight"] = "High";
+				["Brakes"] = "Level 3";
+				["WindowColor"] = "Vantablack";
+				["WindowTint"] = "20";
+				["InteriorMainColor"] = "Vantablack";
+				["InteriorDetailColor"] = "Vantablack";
+				["SeatColor"] = "Vantablack";
+				["Spoiler"] = "Racing Wing";
+				["SpoilerColor"] = "Vantablack";
+				["HeadlightsColor"] = "Vantablack";
+			}
+		elseif input.KeyCode == Enum.KeyCode.KeypadFour then
+			notify("Winter customization equipped")
+			_last_customized = os.clock()
+			customization = {
+				["Texture"] = "IceCamo";
+				["SecondTexture"] = "IceCamo";
+				["BodyColor"] = "Vantablack";
+				["SecondBodyColor"] = "Vantablack";
+				["Engine"] = "Level 5";
+				["Glow"] = "Black";
+				["Horn"] = "Cucaracha";
+				["Rim"] = "Spinner";
+				["WheelColor"] = "PastelBlue";
+				["Tire"] = "Jailbreak";
+				["SuspensionHeight"] = "High";
+				["Brakes"] = "Level 3";
+				["WindowColor"] = "Pastel Violet";
+				["WindowTint"] = "20";
+				["InteriorMainColor"] = "Pastel Violet";
+				["InteriorDetailColor"] = "Pastel Violet";
+				["SeatColor"] = "Pastel Violet";
+				["Spoiler"] = "5Star";
+				["SpoilerColor"] = "PastelBlue";
+				["HeadlightsColor"] = "Pastel Pink";
+			}
+		elseif input.KeyCode == Enum.KeyCode.KeypadFive then
+			notify("Armor customization equipped")
+			_last_customized = os.clock()
+			customization = {
+				["Texture"] = "Armor";
+				["SecondTexture"] = "Armor";
+				["BodyColor"] = "White";
+				["SecondBodyColor"] = "White";
+				["Engine"] = "Level 5";
+				["Glow"] = "Chrome";
+				["Horn"] = "Cucaracha";
+				["Rim"] = "Spinner";
+				["WheelColor"] = "White";
+				["Tire"] = "Jailbreak";
+				["SuspensionHeight"] = "High";
+				["Brakes"] = "Level 3";
+				["WindowColor"] = "White";
+				["WindowTint"] = "60";
+				["InteriorMainColor"] = "White";
+				["InteriorDetailColor"] = "White";
+				["SeatColor"] = "White";
+				["Spoiler"] = "VoltWing";
+				["SpoilerColor"] = "White";
+				["HeadlightsColor"] = "White";
+			}
+		elseif input.KeyCode == Enum.KeyCode.KeypadSix then
+			notify("HyperShift customization equipped")
+			_last_customized = os.clock()
+			customization = {
+				["Texture"] = "None";
+				["SecondTexture"] = "None";
+				["BodyColor"] = "HyperShift";
+				["SecondBodyColor"] = "HyperShift";
+				["Engine"] = "Level 5";
+				["Glow"] = "Chrome";
+				["Horn"] = "Cucaracha";
+				["Rim"] = "Spinner";
+				["WheelColor"] = "HyperShift";
+				["Tire"] = "Jailbreak";
+				["SuspensionHeight"] = "High";
+				["Brakes"] = "Level 3";
+				["WindowColor"] = "HyperShift";
+				["WindowTint"] = "60";
+				["InteriorMainColor"] = "HyperShift";
+				["InteriorDetailColor"] = "HyperShift";
+				["SeatColor"] = "HyperShift";
+				["Spoiler"] = "Racing Wing";
+				["SpoilerColor"] = "HyperShift";
+				["HeadlightsColor"] = "HyperShift";
+			}
 		end
+	end
+end)
+
+local _last_vehicle_customized = nil
+local _last_custom_changed = nil
+
+local function _update_custom(now)
+	equip(customization)
+	PurchaseItem:FireServer("LicensePlate",LICENSE_PLATE)
+	_last_vehicle_customized = now
+	_last_custom_changed = _last_customized
+end
+
+Run.Heartbeat:Connect(function()
+	local now = getLocalPlayerVehicle()
+	if customization and now then
+		if now ~= _last_vehicle_customized then
+			_update_custom(now)
+		elseif _last_custom_changed ~= _last_customized then
+			_update_custom(now)
+		end
+	end
+
+	if _last_vehicle_customized and not now then
+		_last_vehicle_customized = nil
 	end
 end)
 
