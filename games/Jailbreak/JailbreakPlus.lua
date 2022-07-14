@@ -43,11 +43,15 @@ Keypad Zero - stop vehicle customization
 
 Keypad One-Six - vehicle customizations
 
+Keypad Period - equip full brickset
+
+Left-Ctrl - toggle Trader+ UI (only in trading servers)
+
 ]]--
 
 print("Initiating Jailbreak+...")
 
-local Version = "9a"
+local Version = "9b"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -913,6 +917,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 			end
 		elseif input.KeyCode == Enum.KeyCode.KeypadNine and inMainGame then
 			LiftsEnabled = not LiftsEnabled
+			notify("Lifts toggled "..(LiftsEnabled and "on" or "off"))
 		elseif input.KeyCode == Enum.KeyCode.KeypadEight and inMainGame and LaserRemoveEvent == nil then
 			notify("Robbery lasers removed (cannot be undone)")
 
@@ -1166,6 +1171,19 @@ UIS.InputBegan:Connect(function(input,gpe)
 				["SpoilerColor"] = "HyperShift";
 				["HeadlightsColor"] = "HyperShift";
 			}
+		elseif input.KeyCode == Enum.KeyCode.KeypadPeriod then
+			notify("Full brickset equipped")
+			_last_customized = os.clock()
+
+			if customization then
+				customization["Rim"] = "Brickset";
+				customization["Spoiler"] = "Brickset";
+			else
+				customization = {
+					["Rim"] = "Brickset";
+					["Spoiler"] = "Brickset";
+				}
+			end
 		end
 	end
 end)
