@@ -51,7 +51,7 @@ Left-Ctrl - toggle Trader+ UI (only in trading servers)
 
 print("Initiating Jailbreak+...")
 
-local Version = "9b"
+local Version = "9c"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -998,7 +998,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 				Run.Heartbeat:Wait()
 			end
 		elseif input.KeyCode == Enum.KeyCode.KeypadSeven and fastRob == nil and inMainGame then
-			notify("Robbery shortcuts not enabled yet (beta)")
+			notify("Robbery shortcuts not enabled yet (incomplete feature)")
 			--fastRob = true
 			--notify("Robbery shortcuts enabled (cannot be undone)")
 			--[[
