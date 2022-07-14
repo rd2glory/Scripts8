@@ -998,8 +998,10 @@ UIS.InputBegan:Connect(function(input,gpe)
 				Run.Heartbeat:Wait()
 			end
 		elseif input.KeyCode == Enum.KeyCode.KeypadSeven and fastRob == nil and inMainGame then
-			fastRob = true
-			notify("Robbery shortcuts enabled (cannot be undone)")
+			notify("Robbery shortcuts not enabled yet (beta)")
+			--fastRob = true
+			--notify("Robbery shortcuts enabled (cannot be undone)")
+			--[[
 			for _,v in pairs(workspace:GetChildren()) do
 				if v:IsA("BasePart") and v.Name == "Part" then
 					if (v.Size-Vector3.new(1.1, 91.1, 70.3)).Magnitude < 0.1 and (v.Position-Vector3.new(92.729, -22.159, 2170.273)).Magnitude < 0.1 then
@@ -1018,6 +1020,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 					jewStore.Floors:ClearAllChildren()
 				end)
 			end
+			]]--
 		elseif input.KeyCode == Enum.KeyCode.KeypadZero then
 			notify("Customizations off")
 			customization = nil
