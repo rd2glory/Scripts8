@@ -1171,7 +1171,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 				["SpoilerColor"] = "HyperShift";
 				["HeadlightsColor"] = "HyperShift";
 			}
-		elseif input.KeyCode == Enum.KeyCode.KeypadPeriod then
+		elseif input.KeyCode == Enum.KeyCode.Delete then
 			notify("Full brickset equipped")
 			_last_customized = os.clock()
 
