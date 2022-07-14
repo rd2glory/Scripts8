@@ -45,13 +45,21 @@ Keypad One-Six - vehicle customizations
 
 Keypad Period - equip full brickset
 
-Left-Ctrl - toggle Trader+ UI (only in trading servers)
+Left-Ctrl (Trading Server) - toggle Trader+ UI
+
+Left-Ctrl (Main Server) - open robbery times UI
 
 ]]--
 
+if shared.loaded then
+	error("Jailbreak+ already loaded")
+else
+	shared.loaded = true
+end
+
 print("Initiating Jailbreak+...")
 
-local Version = "9c"
+local Version = "10a"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -70,8 +78,13 @@ local GameFolder = ReplicatedStorage:WaitForChild("Game",60)
 local EquipItem = ReplicatedStorage:WaitForChild("GarageEquipItem",60)
 local PurchaseItem = ReplicatedStorage:WaitForChild("GaragePurchaseItem",60)
 
+local RobberyState = ReplicatedStorage:WaitForChild("RobberyState",60)
+local RobberyConsts = require(GameFolder:WaitForChild("Robbery",60):WaitForChild("RobberyConsts",60));
+
 local Vehicles = workspace:WaitForChild("Vehicles")
 local VehicleData = require(GameFolder:WaitForChild("Garage"):WaitForChild("VehicleData"))
+
+local VipOwner = ReplicatedStorage:FindFirstChild("VipOwnerId") and ReplicatedStorage.VipOwnerId.Value
 
 local LICENSE_PLATE = "Yessir"
 
@@ -102,6 +115,18 @@ local robberyVehicles = {
     "BankTruck";
 }
 
+local ROBBERY_UI_LIST = {
+    "Cargo Ship",
+    "Museum",
+    "Power Plant",
+    "Jewelry Store",
+    "Bank",
+	"Tomb",
+	"Casino",
+    "Gas Station",
+	"Donut Store",
+    "Cargo Plane",
+}
 local addGuiOffsetByMake = {
 	Arachnid = 0.8;
 	BeamHybrid = 0.75;
@@ -248,6 +273,57 @@ local function makeInfoGui()
 	return InfoGui
 end
 
+local function makeRobberyTimesUI()
+	-- Gui to Lua
+	-- Version: 3.2
+
+	-- Instances:
+
+	local RobberyTimes = Instance.new("ScreenGui")
+	local ImageLabel = Instance.new("ImageLabel")
+	local TextLabel = Instance.new("TextLabel")
+	local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+
+	--Properties:
+
+	RobberyTimes.Name = "RobberyTimes"
+	RobberyTimes.Parent = game:GetService("CoreGui")
+	RobberyTimes.Enabled = false
+	RobberyTimes.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	RobberyTimes.ResetOnSpawn = false
+
+	ImageLabel.Parent = RobberyTimes
+	ImageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+	ImageLabel.BackgroundColor3 = Color3.fromRGB(198, 255, 244)
+	ImageLabel.BackgroundTransparency = 1.000
+	ImageLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+	ImageLabel.Size = UDim2.new(0, 350, 0, 352)
+	ImageLabel.Image = "rbxassetid://4935396531"
+	ImageLabel.ImageColor3 = Color3.fromRGB(85, 255, 0)
+	ImageLabel.ScaleType = Enum.ScaleType.Slice
+	ImageLabel.SliceCenter = Rect.new(8, 8, 492, 392)
+
+	TextLabel.Parent = ImageLabel
+	TextLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+	TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.BackgroundTransparency = 1.000
+	TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+	TextLabel.Size = UDim2.new(0.907382548, 0, 0.896778524, 0)
+	TextLabel.Font = Enum.Font.Bangers
+	TextLabel.Text = "Loading..."
+	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.TextScaled = true
+	TextLabel.TextSize = 23.000
+	TextLabel.TextWrapped = true
+	TextLabel.RichText = true
+	TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+
+	UIAspectRatioConstraint.Parent = ImageLabel
+
+	return RobberyTimes
+end
+
 local function makeNametag()
 	-- Gui to Lua
 	-- Version: 3.2
@@ -365,11 +441,11 @@ local function formatTime(seconds)
     if days >= 1 then
         return tostring(math.floor(days)).." day"..(math.floor(days)>1 and "s" or "")
     elseif hours >= 1 then
-        return tostring(math.floor(hours)).." hour"..(math.floor(days)>1 and "s" or "")
+        return tostring(math.floor(hours)).." hour"..(math.floor(hours)>1 and "s" or "")
     elseif minutes >= 1 then
-        return tostring(math.floor(minutes)).." minute"..(math.floor(days)>1 and "s" or "")
+        return tostring(math.floor(minutes)).." minute"..(math.floor(minutes)>1 and "s" or "")
     else
-        return tostring(math.floor(seconds)).." second"..(math.floor(days)>1 and "s" or "")
+        return tostring(math.floor(seconds)).." second"..(math.floor(seconds)>1 and "s" or "")
     end
 end
 
@@ -474,6 +550,37 @@ local function editInfo(v,info)
     if not hiddenPrice then
         v.Price.TextColor3 = info.CanAfford and Color3.fromRGB(82, 238, 111) or Color3.fromRGB(238, 56, 56)
     end
+end
+
+local function getRobberyStatusList()
+    local returnValue = {}
+
+    for _,v in pairs(RobberyState:GetChildren()) do
+        local num = tonumber(v.Name)
+
+        for i,j in pairs(RobberyConsts.ENUM_ROBBERY) do
+            if j == num then
+				local value = nil
+				if v.Value == 1 or v.Value == 2 then
+					value = v.Value
+				else
+					value = false
+				end
+                returnValue[RobberyConsts.PRETTY_NAME[num]] = value
+                --[[
+                if RobberyConsts.PRETTY_NAME[num] == "Museum" then
+                    print(num)
+                end
+                ]]--
+            end
+        end
+    end
+
+    for _,v in pairs(ROBBERY_UI_LIST) do
+        returnValue[v] = returnValue[v] or false
+    end
+
+    return returnValue
 end
 
 Run.Heartbeat:Connect(function()
@@ -998,7 +1105,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 				Run.Heartbeat:Wait()
 			end
 		elseif input.KeyCode == Enum.KeyCode.KeypadSeven and fastRob == nil and inMainGame then
-			notify("Robbery shortcuts not enabled yet (incomplete feature)")
+			--notify("Robbery shortcuts not enabled yet (incomplete feature)")
 			--fastRob = true
 			--notify("Robbery shortcuts enabled (cannot be undone)")
 			--[[
@@ -1108,7 +1215,7 @@ UIS.InputBegan:Connect(function(input,gpe)
 				["BodyColor"] = "Vantablack";
 				["SecondBodyColor"] = "Vantablack";
 				["Engine"] = "Level 5";
-				["Glow"] = "Black";
+				["Glow"] = "Chrome";
 				["Horn"] = "Cucaracha";
 				["Rim"] = "Spinner";
 				["WheelColor"] = "PastelBlue";
@@ -1469,6 +1576,108 @@ if inMainGame then -- highway
 	highway.Parent = workspace
 end
 
+if inMainGame then -- robbery times UI
+	local tweened = Instance.new("Color3Value")
+	tweened.Value = Color3.new(0,1,0)
+	
+	local tweenInfo = TweenInfo.new(
+		1,
+		Enum.EasingStyle.Quad,
+		Enum.EasingDirection.Out,
+		-1,
+		true
+	)
+
+	do -- init tween
+		local t = game:GetService("TweenService"):Create(tweened,tweenInfo,{
+			["Value"] = Color3.new(1,1,1);
+		})
+
+		t:Play()
+	end
+
+	local publicOpenTimes = {
+		["Jewelry Store"] = 300;
+		["Tomb"] = 427;
+		["Cargo Plane"] = 282;
+		["Museum"] = 240;
+		["Donut Store"] = 302;
+		["Casino"] = 360;
+		["Gas Station"] = 302;
+		["Cargo Ship"] = nil; -- unreliable data
+		["Bank"] = 300;
+		["Power Plant"] = 300;
+	}
+
+	local privateOpenTimes = {
+		["Jewelry Store"] = 530;
+		["Tomb"] = 736;
+		["Cargo Plane"] = 721;
+		["Museum"] = 420;
+		["Donut Store"] = 530;
+		["Casino"] = 630;
+		["Gas Station"] = 530;
+		["Cargo Ship"] = nil; -- unreliable data
+		["Bank"] = 530;
+		["Power Plant"] = 525;
+	}
+
+	local robberyTimes = makeRobberyTimesUI()
+
+	local lastClosed = {}
+	local lastStatus = {}
+
+	Run.Heartbeat:Connect(function()
+		local isDown = UIS:IsKeyDown(Enum.KeyCode.LeftControl)
+
+		if isDown then
+			local status = getRobberyStatusList()
+
+			local str = ""
+	
+			for _,v in ipairs(ROBBERY_UI_LIST) do
+				local l = lastStatus[v] or false
+				local s = status[v] or false
+	
+				if l and not s then
+					lastClosed[v] = os.clock()
+				elseif l and s then
+					lastClosed[v] = nil
+				end
+	
+				if s==1 then
+					str = str..'<font color="rgb(0,255,0)">'
+				elseif s==2 then
+					local function fix(e)
+						return math.round(e*255)
+					end
+					local c = tweened.Value
+					local rgb = fix(c.R)..","..fix(c.G)..","..fix(c.B)
+					str = str..'<font color="rgb('..rgb..')">'
+				else
+					str = str..'<font color="rgb(255,0,0)">'
+				end
+				str = str..v
+	
+				if (not s) and lastClosed[v] and publicOpenTimes[v] and privateOpenTimes[v] then
+					local timeExpectedOpen = (VipOwner and privateOpenTimes or publicOpenTimes)[v]+lastClosed[v]
+					str = str.." ("..formatTime(math.clamp(timeExpectedOpen-os.clock(),0,math.huge))..")"
+				end
+	
+				str = str.."</font>\n"
+			end
+	
+			str = str.."<i>Robbery open estimates are accurate to about ~4 seconds</i>"
+	
+			lastStatus = status
+
+			robberyTimes.ImageLabel.TextLabel.Text = str
+		end
+
+		robberyTimes.Enabled = isDown
+	end)
+end
+
 if not inMainGame then
 	print("Loading Trader+...")
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/traderPlus.lua"))()
@@ -1490,4 +1699,4 @@ end
 syn.queue_on_teleport('loadstring(game:HttpGet("https://raw.githubusercontent.com/iamtryingtofindname/Scripts8/main/games/Jailbreak/JailbreakPlus.lua"))()')
 
 print("Jailbreak+ (v"..Version..") initiated sucessfully")
-notify("Jailbreak+ (v"..Version..") initiated", 6)
+notify("Jailbreak+ (v"..Version..") by iamnameless17 initiated")
