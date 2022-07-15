@@ -544,7 +544,7 @@ local function editInfo(v,info)
 
     v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or ""--"http://www.roblox.com/asset/?id=9964662085"
 
-    v.PlayerName.Position =  UDim2.new(0.5, 0, playerId and (extraInfo and 0.55 or 0.6) or (extraInfo and 0.15 or 0.2), 0)
+    v.PlayerName.Position =  UDim2.new(0.5, 0, playerId and (extraInfo and 0.15 or 0.2) or (extraInfo and 0.55 or 0.6), 0)
     v.Thumbnail.Position =  UDim2.new(0.5, 0, extraInfo and 0.45 or 0.5, 0)
 
     if not hiddenPrice then
