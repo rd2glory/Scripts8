@@ -59,7 +59,7 @@ end
 
 print("Initiating Jailbreak+...")
 
-local Version = "10b"
+local Version = "10c"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -542,9 +542,9 @@ local function editInfo(v,info)
 	v.PlayerName.Font = info.LastPlayer and Enum.Font.SourceSansSemibold or Enum.Font.SourceSansLight
 	v.Thumbnail.ImageTransparency = (info.LastPlayer and playerId) and 0 or 0.55
 
-    v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or "http://www.roblox.com/asset/?id=9964662085"
+    v.Thumbnail.Image = playerId and "rbxthumb://type=AvatarHeadShot&id="..playerId.."&w=420&h=420" or ""--"http://www.roblox.com/asset/?id=9964662085"
 
-    v.PlayerName.Position =  UDim2.new(0.5, 0, extraInfo and 0.15 or 0.2, 0)
+    v.PlayerName.Position =  UDim2.new(0.5, 0, playerId and (extraInfo and 0.55 or 0.6) or (extraInfo and 0.15 or 0.2), 0)
     v.Thumbnail.Position =  UDim2.new(0.5, 0, extraInfo and 0.45 or 0.5, 0)
 
     if not hiddenPrice then
@@ -597,8 +597,13 @@ Run.Heartbeat:Connect(function()
 
         local old = boundingBox and boundingBox:FindFirstChild("MoneyBillboard")
 
-        if old and old:FindFirstChild("Frame") then
-            old.Frame.Visible = false
+        if old then
+			if old:FindFirstChild("Frame") then
+				old.Frame.Visible = false
+			end
+			if old:FindFirstChild("Level") then
+				old.Level.Visible = false
+			end
         end
 
 		if boundingBox and not boundingBox:FindFirstChild("InfoGui") then
@@ -1001,7 +1006,9 @@ UIS.InputBegan:Connect(function(input,gpe)
 					Exiting = true
 					notify("Teleporting...",10)
 					player:Kick("Rejoining... (DON'T LEAVE)")
-					task.wait(4)
+					task.wait(3)
+					shared.loaded = nil
+					task.wait(1)
 					TS:Teleport(game.PlaceId)
 				end
 			else
