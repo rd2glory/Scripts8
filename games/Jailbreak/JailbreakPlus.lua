@@ -59,7 +59,7 @@ end
 
 print("Initiating Jailbreak+...")
 
-local Version = "10a"
+local Version = "10b"
 
 if not game:IsLoaded() then
 	game.Loaded:Wait()
@@ -90,7 +90,6 @@ local LICENSE_PLATE = "Yessir"
 
 --local Notification = require(ReplicatedStorage:WaitForChild("Game"):WaitForChild("Notification"))
 
-local fastRob = nil
 local born = {}
 local lastDrivenBy = {}
 local customization
@@ -100,6 +99,7 @@ local player = Players.LocalPlayer
 --local GarageUI = playerGui:WaitForChild("AppUI"):WaitForChild("Garage")
 
 local NoClipEnabled = false
+local tpEnabled = true
 local Exiting = false
 local SmallVehicleDetails = false
 local LiftsEnabled = false
@@ -1012,10 +1012,12 @@ UIS.InputBegan:Connect(function(input,gpe)
 				lastUpPress = now
 			end
 		elseif input.KeyCode == Enum.KeyCode.KeypadPlus or (input.KeyCode == Enum.KeyCode.Q and not gpe) then
-			pcall(function()
-				local character = player.Character
-				character:PivotTo(character.PrimaryPart.CFrame*CFrame.new(0,0,-5))
-			end)
+			if tpEnabled then
+				pcall(function()
+					local character = player.Character
+					character:PivotTo(character.PrimaryPart.CFrame*CFrame.new(0,0,-5))
+				end)
+			end
 		elseif input.KeyCode == Enum.KeyCode.KeypadMultiply then
 			SmallVehicleDetails = not SmallVehicleDetails
 		elseif input.KeyCode == Enum.KeyCode.KeypadMinus then
@@ -1104,30 +1106,9 @@ UIS.InputBegan:Connect(function(input,gpe)
 				Run.Heartbeat:Wait()
 				Run.Heartbeat:Wait()
 			end
-		elseif input.KeyCode == Enum.KeyCode.KeypadSeven and fastRob == nil and inMainGame then
-			--notify("Robbery shortcuts not enabled yet (incomplete feature)")
-			--fastRob = true
-			--notify("Robbery shortcuts enabled (cannot be undone)")
-			--[[
-			for _,v in pairs(workspace:GetChildren()) do
-				if v:IsA("BasePart") and v.Name == "Part" then
-					if (v.Size-Vector3.new(1.1, 91.1, 70.3)).Magnitude < 0.1 and (v.Position-Vector3.new(92.729, -22.159, 2170.273)).Magnitude < 0.1 then
-						v:Destroy()
-					elseif (v.Size-Vector3.new(17, 1, 61)).Magnitude < 0.1 and (v.Position-Vector3.new(107.848, -18.376, 2129.646)).Magnitude < 0.1 then
-						v.CFrame = CFrame.new(102.156914, -14.1233616, 2140.41724, -0.882818222, 0.0191042256, 0.469327837, 0, 0.999172568, -0.0406718664, -0.469716519, -0.0359058268, -0.882087767)
-
-					elseif (v.Size-Vector3.new(17, 1, 61)).Magnitude < 0.1 and (v.Position-Vector3.new(89.887, -18.473, 2096.522)).Magnitude < 0.1 then
-						v.CFrame = CFrame.new(69.6064529, -9.79850388, 2189.36572, -0.774876893, 0.0699020922, 0.628235281, 0.00373038976, 0.994355083, -0.106038146, -0.632101297, -0.0798229426, -0.770763457)
-					end
-				end
-			end
-			while Run.Heartbeat:Wait() do
-				pcall(function()
-					local jewStore = workspace.Jewelrys:GetChildren()[1]
-					jewStore.Floors:ClearAllChildren()
-				end)
-			end
-			]]--
+		elseif input.KeyCode == Enum.KeyCode.KeypadSeven then
+			tpEnabled = not tpEnabled
+			notify("TP toggled "..(tpEnabled and "on" or "off"))
 		elseif input.KeyCode == Enum.KeyCode.KeypadZero then
 			notify("Customizations off")
 			customization = nil
