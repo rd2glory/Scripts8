@@ -1,0 +1,13 @@
+local R15scriptlist = {
+    "R15 Samurai",
+    "R15 Sniper",
+    "R15 Dick",
+    "R15 Car",
+    "R15 Amogus",
+    "R15 Dragon",
+    "R15 Arm-Man",
+    "R15 Flying Extendo",
+    "R15 HoverBoard",
+}
+
+return R15scriptlist 
